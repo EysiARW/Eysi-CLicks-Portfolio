@@ -133,6 +133,11 @@ function switchTab(cat) {
   ensureRendered(cat);
   updateOrientToggleUI(cat);
 
+  // Rebalance grid once the active panel is visible in layout
+  requestAnimationFrame(() => {
+    balanceGrid('grid-' + cat);
+  });
+
   // Keep the URL shareable/refreshable without a full page reload.
   const url = new URL(window.location);
   url.searchParams.set('tab', cat);
@@ -185,12 +190,13 @@ function triggerShutterFlash() {
 let lastFocusedElement = null;
 
 function openLightbox(images, idx) {
+  if (!images || !images.length) return;
   const lightbox = document.getElementById('lightbox');
   if (!lightbox) return;
   lastFocusedElement = document.activeElement;
   triggerShutterFlash();
   lightboxImages = images;
-  lightboxIdx    = idx;
+  lightboxIdx    = Math.max(0, Math.min(idx, images.length - 1));
   updateLightbox();
   lightbox.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -206,6 +212,12 @@ function updateLightbox() {
     img.src = src; 
     img.alt = caption || 'Portfolio photo'; 
   }
+
+  const titleEl = document.getElementById('lightbox-title');
+  if (titleEl) titleEl.textContent = caption || 'Cherished Moment';
+
+  const counterEl = document.getElementById('lightbox-counter');
+  if (counterEl) counterEl.textContent = `${String(lightboxIdx + 1).padStart(2, '0')} / ${String(lightboxImages.length).padStart(2, '0')}`;
 
   // Preload neighboring photos for instant transition
   if (lightboxImages.length > 1) {
@@ -238,7 +250,9 @@ function lightboxNav(dir) {
 const lightboxEl = document.getElementById('lightbox');
 if (lightboxEl) {
   lightboxEl.addEventListener('click', function (e) {
-    if (e.target === this) closeLightbox();
+    if (e.target === this || e.target.classList.contains('lightbox-stage')) {
+      closeLightbox();
+    }
   });
 
   // Mobile Touch Gestures
@@ -289,13 +303,40 @@ if (lightboxEl) {
   }, { passive: true });
 }
 
-// Keyboard navigation
+// Keyboard navigation & Modal Focus Trap
 document.addEventListener('keydown', e => {
   const lb = document.getElementById('lightbox');
   if (!lb || !lb.classList.contains('open')) return;
-  if (e.key === 'Escape')     closeLightbox();
-  if (e.key === 'ArrowLeft')  lightboxNav(-1);
-  if (e.key === 'ArrowRight') lightboxNav(1);
+
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    closeLightbox();
+    return;
+  }
+  if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    lightboxNav(-1);
+    return;
+  }
+  if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    lightboxNav(1);
+    return;
+  }
+  if (e.key === 'Tab') {
+    const focusable = Array.from(lb.querySelectorAll('button:not([disabled])'));
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last  = focusable[focusable.length - 1];
+
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
 });
 
 
@@ -348,6 +389,9 @@ function buildGrid(gridId, rawImages) {
     img.alt = image.caption || '';
     img.loading = 'lazy';     // don't fetch until near viewport
     img.decoding = 'async';   // don't block the main thread decoding it
+    img.onerror = () => {
+      img.alt = 'Photograph currently being preserved in archive';
+    };
 
     const figcaption = document.createElement('figcaption');
     figcaption.className = 'photo-overlay';
@@ -413,7 +457,7 @@ function buildGrid(gridId, rawImages) {
 // stay the same height as each other too.
 function balanceGrid(gridId) {
   const grid = document.getElementById(gridId);
-  if (!grid) return;
+  if (!grid || grid.offsetParent === null) return;
 
   const items = Array.from(grid.querySelectorAll('.photo-item'));
   items.forEach(item => item.classList.remove('fill-row'));
@@ -456,7 +500,9 @@ function renderCategory(cat) {
   if (grid) grid.classList.toggle('orient-landscape', orientation === 'landscape');
 
   buildGrid('grid-' + cat, images);
-  balanceGrid('grid-' + cat);
+  requestAnimationFrame(() => {
+    balanceGrid('grid-' + cat);
+  });
 
   renderedOrientation[cat] = orientation;
 }

@@ -227,7 +227,14 @@
 
     <button type="button" class="lightbox-nav lightbox-prev" onclick="lightboxNav(-1)" aria-label="Previous photo">&#8592;</button>
 
-    <img class="lightbox-img" id="lightbox-img" src="EYSI-3-15.jpg" alt="Portfolio photo">
+    <div class="lightbox-stage">
+      <img class="lightbox-img" id="lightbox-img" src="EYSI-3-15.jpg" alt="Portfolio photo">
+      <div class="lightbox-caption" id="lightbox-caption">
+        <span class="lightbox-title" id="lightbox-title"></span>
+        <span class="lightbox-sep" aria-hidden="true">·</span>
+        <span class="lightbox-counter" id="lightbox-counter"></span>
+      </div>
+    </div>
 
     <button type="button" class="lightbox-nav lightbox-next" onclick="lightboxNav(1)" aria-label="Next photo">&#8594;</button>
 

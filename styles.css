@@ -76,7 +76,7 @@
   --border:         rgba(17, 17, 17, 0.10);
   --border-strong:  rgba(17, 17, 17, 0.22);
   --text:           #111111;
-  --text-muted:     rgba(17, 17, 17, 0.60);
+  --text-muted:     rgba(17, 17, 17, 0.68);
   --amber:          #111111;
   --amber-dim:      rgba(17, 17, 17, 0.05);
   --amber-glow:     rgba(17, 17, 17, 0.12);
@@ -446,9 +446,13 @@ nav {
 #hero {
   position: relative;
   z-index: 1;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 2rem 1.5rem;
+  padding: 5.5rem 1.5rem 3.5rem;
   overflow: hidden;
 }
 
@@ -492,35 +496,35 @@ nav {
 }
 
 .hero-logo {
-  width: 128px;
+  width: 104px;
   height: auto;
-  margin-bottom: 1.4rem;
+  margin-bottom: 0.85rem;
   opacity: 0;
-  filter: blur(8px) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.04));
-  transform: scale(0.88);
-  animation: logoReveal 1.3s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.35s;
+  filter: blur(6px) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.04));
+  transform: scale(0.92);
+  animation: logoReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s;
 }
 
 @media (min-width: 600px) {
-  .hero-logo { width: 158px; }
+  .hero-logo { width: 122px; }
 }
 
 .hero-eyebrow {
   font-family: var(--font-interphases);
-  font-size: 0.65rem;
-  letter-spacing: 0.35em;
+  font-size: 0.62rem;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: rgba(17, 17, 17, 0.65);
-  margin-bottom: 1.8rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
   opacity: 0;
-  animation: fadeUp 0.8s ease forwards 0.65s;
+  animation: fadeUp 0.8s ease forwards 0.55s;
 }
 
 .hero-title {
   font-family: var(--font-dreamer);
-  font-size: clamp(4.2rem, 18vw, 11rem);
+  font-size: clamp(3.6rem, 15vw, 8.8rem);
   font-weight: 900;
-  line-height: 0.88;
+  line-height: 0.86;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text);
@@ -554,12 +558,14 @@ nav {
   font-family: var(--font-times);
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+  font-size: clamp(0.96rem, 2.2vw, 1.22rem);
   letter-spacing: 0.02em;
   color: var(--text);
-  margin-top: 1.1rem;
+  margin-top: 0.85rem;
+  max-width: 560px;
+  line-height: 1.5;
   opacity: 0;
-  animation: fadeUp 0.9s ease forwards 1.45s;
+  animation: fadeUp 0.9s ease forwards 1.35s;
 }
 
 
@@ -567,22 +573,22 @@ nav {
 .memory-motif {
   display: inline-flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.65rem;
   font-family: var(--font-times);
   font-style: italic;
-  font-size: 0.82rem;
-  letter-spacing: 0.06em;
+  font-size: 0.76rem;
+  letter-spacing: 0.05em;
   color: var(--text);
-  margin-top: 1.2rem;
-  padding: 0.45rem 1.35rem;
-  border: 1px solid rgba(17, 17, 17, 0.12);
+  margin-top: 0.95rem;
+  padding: 0.35rem 1.15rem;
+  border: 1px solid rgba(17, 17, 17, 0.10);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.90);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   opacity: 0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
-  animation: fadeUp 0.8s ease forwards 1.6s;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+  animation: fadeUp 0.8s ease forwards 1.5s;
 }
 
 .motif-glyph {
@@ -598,23 +604,24 @@ nav {
 }
 
 .hero-divider {
-  width: 40px;
-  height: 1.5px;
-  background: var(--text);
-  margin: 1.8rem auto 1.5rem auto;
+  width: 28px;
+  height: 1px;
+  background: rgba(17, 17, 17, 0.22);
+  margin: 1.1rem auto 0.85rem auto;
   transform: scaleX(0);
   opacity: 0;
-  animation: expandLine 0.8s ease forwards 1.8s;
+  animation: expandLine 0.8s ease forwards 1.65s;
 }
 
 .hero-sub {
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
+  font-family: var(--font-interphases);
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--text-muted);
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   opacity: 0;
-  animation: fadeUp 0.8s ease forwards 1.95s;
+  animation: fadeUp 0.8s ease forwards 1.8s;
 }
 
 /* Viewfinder corner ticks — camera HUD aesthetics */
@@ -640,15 +647,20 @@ nav {
 
 .hero-scroll-hint {
   position: absolute;
-  bottom: 2rem;
+  bottom: 1.25rem;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.35rem;
   opacity: 0;
-  animation: fadeIn 1s ease forwards 2.6s;
+  font-family: var(--font-interphases);
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  animation: fadeIn 1s ease forwards 2.1s;
 }
 
 .hero-scroll-hint span {
@@ -692,11 +704,18 @@ nav {
   aspect-ratio: 4 / 5;
   overflow: hidden;
   border-radius: 2px;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: #ffffff;
+  padding: 8px;
+  border: 1px solid rgba(17, 17, 17, 0.08);
   margin: 0 auto;
   transform: rotate(-1.1deg);
-  box-shadow: 0 20px 48px -16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.12);
+  transition: transform 0.6s var(--shutter-ease), box-shadow 0.6s var(--shutter-ease);
+}
+
+.about-img:hover {
+  transform: rotate(0deg) scale(1.01);
+  box-shadow: 0 32px 70px -20px rgba(0, 0, 0, 0.16);
 }
 
 .about-img img {
@@ -847,8 +866,10 @@ nav {
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 1rem;
-  padding: 0 1.5rem 3rem;
+  gap: 1.25rem;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 1.5rem 2.8rem;
 }
 
 .cat-tabs {
@@ -882,9 +903,11 @@ nav {
 
 .cat-tab:first-child          { border-radius: 2px 0 0 2px; }
 .cat-tab:last-child           { border-radius: 0 2px 2px 0; }
-.cat-tab:not(:first-child)    { border-left: none; }
+.cat-tab:not(:first-child)    { margin-left: -1px; }
 
 .cat-tab.active {
+  position: relative;
+  z-index: 1;
   color: var(--bg);
   background: var(--text);
   border-color: var(--text);
@@ -892,6 +915,8 @@ nav {
 }
 
 .cat-tab:not(.active):hover {
+  position: relative;
+  z-index: 1;
   color: var(--text);
   border-color: rgba(17, 17, 17, 0.35);
   background: rgba(17, 17, 17, 0.03);
@@ -926,9 +951,11 @@ nav {
 
 .orient-btn:first-child       { border-radius: 2px 0 0 2px; }
 .orient-btn:last-child        { border-radius: 0 2px 2px 0; }
-.orient-btn:not(:first-child) { border-left: none; }
+.orient-btn:not(:first-child) { margin-left: -1px; }
 
 .orient-btn.active {
+  position: relative;
+  z-index: 1;
   color: var(--bg);
   background: var(--text);
   border-color: var(--text);
@@ -936,6 +963,8 @@ nav {
 }
 
 .orient-btn:not(.active):hover {
+  position: relative;
+  z-index: 1;
   color: var(--text);
   border-color: rgba(17, 17, 17, 0.35);
   background: rgba(17, 17, 17, 0.03);
@@ -982,7 +1011,9 @@ nav {
 
 .cat-panel {
   display: none;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
+  max-width: 1360px;
+  margin: 0 auto;
   content-visibility: auto;
   contain-intrinsic-size: 800px;
 }
@@ -990,15 +1021,16 @@ nav {
 
 .cat-intro {
   text-align: center;
-  margin-bottom: 2.5rem;
-  padding: 0 0.5rem;
+  margin-bottom: 2.8rem;
+  padding: 0 1rem;
 }
 
 .cat-intro p {
-  font-size: 0.82rem;
-  line-height: 1.7;
+  font-family: var(--font-interphases);
+  font-size: 0.88rem;
+  line-height: 1.75;
   color: var(--text-muted);
-  max-width: 380px;
+  max-width: 520px;
   margin: 0 auto;
 }
 
@@ -1115,12 +1147,13 @@ nav {
   position: absolute;
   width: 9px;
   height: 9px;
-  border-color: var(--text);
+  border-color: #ffffff;
   border-style: solid;
   opacity: 0;
   transition: opacity 0.3s, transform 0.3s var(--shutter-ease);
   z-index: 3;
   pointer-events: none;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
 }
 
 .photo-item .vf-c-tl { top: 9px; left: 9px; border-width: 1px 0 0 1px; transform: translate(-3px, -3px); }
@@ -1290,14 +1323,59 @@ nav {
 
 .lightbox.open { display: flex; }
 
-.lightbox-img {
+.lightbox-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
   max-width: 92vw;
   max-height: 90dvh;
+}
+
+.lightbox-img {
+  max-width: 92vw;
+  max-height: 80dvh;
   object-fit: contain;
-  border-radius: 3px;
+  border-radius: 2px;
   box-shadow: 0 0 100px rgba(0, 0, 0, 0.95);
   transition: transform 0.4s var(--shutter-ease), filter 0.35s ease;
   animation: photoBloom 0.45s var(--shutter-ease);
+}
+
+.lightbox-caption {
+  margin-top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.45rem 1.35rem;
+  background: rgba(22, 22, 22, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #ffffff;
+  pointer-events: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.lightbox-title {
+  font-family: var(--font-garamond);
+  font-style: italic;
+  font-size: 0.96rem;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.lightbox-sep {
+  opacity: 0.35;
+  font-size: 0.65rem;
+}
+
+.lightbox-counter {
+  font-family: var(--font-arial-unicode);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 @keyframes photoBloom {
@@ -1377,7 +1455,15 @@ nav {
   }
   .lightbox-img {
     max-width: 95vw;
-    max-height: 88dvh;
+    max-height: 78dvh;
+  }
+  .lightbox-caption {
+    margin-top: 0.75rem;
+    padding: 0.35rem 1rem;
+    gap: 0.5rem;
+  }
+  .lightbox-title {
+    font-size: 0.85rem;
   }
   .lightbox-close {
     top: 0.8rem;
@@ -1495,13 +1581,18 @@ footer .ft-sub {
 
 /* ── 13b. FOCUS STATES (keyboard accessibility) ── */
 
+.nav-logo:focus-visible,
 .nav-links a:focus-visible,
 .cat-tab:focus-visible,
 .orient-btn:focus-visible,
-.photo-item:focus-visible,
+.photo-item:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
+
 .lightbox-close:focus-visible,
 .lightbox-nav:focus-visible {
-  outline: 2px solid var(--text);
+  outline: 2px solid #ffffff;
   outline-offset: 3px;
 }
 
@@ -1521,6 +1612,9 @@ footer .ft-sub {
 /* ── 15. REDUCED MOTION ── */
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
   *, *::before, *::after {
     animation-duration:  0.01ms !important;
     animation-delay:     0.01ms !important;
