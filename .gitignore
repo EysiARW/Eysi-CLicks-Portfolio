@@ -1,0 +1,10 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Editor Settings
+.vscode/
+
+# Backup & uncompressed assets (optional)
+.originals/
+*.original.*
