@@ -27,6 +27,10 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="alternate icon" href="favicon.ico">
 
+  <!-- Critical Resource Preloading -->
+  <link rel="preload" href="fonts/Dreamer.otf" as="font" type="font/otf" crossorigin>
+  <link rel="preload" href="eysi clicks (1).png" as="image">
+
   <!-- Typography Preconnect & Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,9 +41,34 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
+
+  <!-- JSON-LD Structured Data for Local SEO & Photography Portfolio -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": ["LocalBusiness", "Photographer"],
+    "name": "EYSI CLICKS",
+    "founder": {
+      "@type": "Person",
+      "name": "Andrei C. Capoy"
+    },
+    "description": "Cherishing and immortalizing life's fleeting moments through the lens. Pre-Debut, Events, and Institutional photography based in Cabuyao, Laguna.",
+    "url": "https://EysiClicks-portfolio-2026.great-site.net",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Cabuyao",
+      "addressRegion": "Laguna",
+      "addressCountry": "PH"
+    },
+    "areaServed": ["Cabuyao", "Santa Rosa", "Calamba", "Laguna", "Region IV-A"],
+    "image": "https://EysiClicks-portfolio-2026.great-site.net/EYSI-3-15.jpg"
+  }
+  </script>
 </head>
 
 <body>
+
+  <a href="#gallery" class="skip-link">Skip to Gallery Archive</a>
 
   <div class="grain" aria-hidden="true"></div>
 
@@ -133,7 +162,10 @@
       <figure class="about-img">
         <span class="frame-mark frame-mark-tl" aria-hidden="true"></span>
         <span class="frame-mark frame-mark-br" aria-hidden="true"></span>
-        <img src="EYSI-3-15.jpg" alt="Photographer portrait" loading="lazy" decoding="async" width="800" height="1000">
+        <picture>
+          <source srcset="EYSI-3-15.webp" type="image/webp">
+          <img src="EYSI-3-15.jpg" alt="Photographer portrait" loading="lazy" decoding="async" width="800" height="1000">
+        </picture>
         <figcaption class="about-img-tag">Andrei C. Capoy &nbsp;·&nbsp; Behind the Lens</figcaption>
       </figure>
 
@@ -218,7 +250,20 @@
     <div class="logo-ft">EYSI CLICKS</div>
     <p>Moments fade. Photographs endure. &nbsp;·&nbsp; Cabuyao, Laguna</p>
     <p class="ft-sub">Cherishing &amp; immortalizing life's fleeting moments through the lens</p>
+    <div class="ft-socials" aria-label="Social archives">
+      <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" class="ft-link">Instagram</a>
+      <span class="ft-sep" aria-hidden="true">·</span>
+      <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" class="ft-link">Facebook</a>
+      <span class="ft-sep" aria-hidden="true">·</span>
+      <a href="mailto:andreicapoy@gmail.com" class="ft-link">Inquiries</a>
+    </div>
   </footer>
+
+  <!-- Return to Surface (Back to Top) -->
+  <button type="button" class="back-to-top" id="back-to-top" aria-label="Return to top">
+    <span class="btt-arrow" aria-hidden="true">↑</span>
+    <span class="btt-text">TOP</span>
+  </button>
 
 
   <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
@@ -228,11 +273,15 @@
     <button type="button" class="lightbox-nav lightbox-prev" onclick="lightboxNav(-1)" aria-label="Previous photo">&#8592;</button>
 
     <div class="lightbox-stage">
-      <img class="lightbox-img" id="lightbox-img" src="EYSI-3-15.jpg" alt="Portfolio photo">
+      <img class="lightbox-img" id="lightbox-img" src="EYSI-3-15.jpg" alt="Portfolio photo" title="Click to zoom / inspect detail">
       <div class="lightbox-caption" id="lightbox-caption">
         <span class="lightbox-title" id="lightbox-title"></span>
         <span class="lightbox-sep" aria-hidden="true">·</span>
         <span class="lightbox-counter" id="lightbox-counter"></span>
+      </div>
+      <div class="lightbox-filmstrip" id="lightbox-filmstrip" role="tablist" aria-label="Photo series thumbnails"></div>
+      <div class="lightbox-hints" aria-hidden="true">
+        <span class="hint-key">← / →</span> Navigate <span class="hint-sep">·</span> <span class="hint-key">Esc</span> Close <span class="hint-sep">·</span> Click to Zoom
       </div>
     </div>
 

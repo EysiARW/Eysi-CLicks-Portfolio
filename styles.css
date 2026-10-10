@@ -173,6 +173,35 @@ body {
 }
 
 
+/* ── 3b. ACCESSIBILITY SKIP LINK ── */
+
+.skip-link {
+  position: fixed;
+  top: 1.25rem;
+  left: 1.5rem;
+  z-index: 9999;
+  padding: 0.65rem 1.25rem;
+  background: var(--text);
+  color: var(--bg);
+  font-family: var(--font-interphases);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 2px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transform: translateY(-250%);
+  transition: transform 0.25s var(--shutter-ease);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
+
+
 /* ── 4. NAVIGATION ── */
 
 nav {
@@ -724,6 +753,11 @@ nav {
   object-fit: cover;
   display: block;
   filter: brightness(0.97) contrast(1.02);
+}
+
+.about-img picture,
+.photo-item picture {
+  display: contents;
 }
 
 /* Corner brackets — a framing/viewfinder cue that ties the About photo
@@ -1334,16 +1368,25 @@ nav {
 
 .lightbox-img {
   max-width: 92vw;
-  max-height: 80dvh;
+  max-height: 72dvh;
   object-fit: contain;
   border-radius: 2px;
   box-shadow: 0 0 100px rgba(0, 0, 0, 0.95);
   transition: transform 0.4s var(--shutter-ease), filter 0.35s ease;
   animation: photoBloom 0.45s var(--shutter-ease);
+  cursor: zoom-in;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.lightbox-img.zoomed {
+  transform: scale(1.85);
+  cursor: zoom-out;
+  z-index: 10;
 }
 
 .lightbox-caption {
-  margin-top: 1rem;
+  margin-top: 0.85rem;
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
@@ -1376,6 +1419,90 @@ nav {
   font-size: 0.65rem;
   letter-spacing: 0.14em;
   color: rgba(255, 255, 255, 0.6);
+}
+
+/* Lightbox Filmstrip Thumbnail Scrubber */
+.lightbox-filmstrip {
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  max-width: min(88vw, 680px);
+  overflow-x: auto;
+  padding: 0.3rem 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+  scroll-behavior: smooth;
+  z-index: 5;
+}
+
+.lightbox-filmstrip::-webkit-scrollbar {
+  height: 3px;
+}
+
+.lightbox-filmstrip::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+}
+
+.filmstrip-thumb {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #111111;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.45;
+  padding: 0;
+  transition: opacity 0.25s, border-color 0.25s, transform 0.25s var(--shutter-ease);
+}
+
+.filmstrip-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.filmstrip-thumb:hover {
+  opacity: 0.85;
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.05);
+}
+
+.filmstrip-thumb.active {
+  opacity: 1;
+  border-color: #ffffff;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+  transform: scale(1.08);
+}
+
+/* Minimalist Navigation & Zoom Hints */
+.lightbox-hints {
+  margin-top: 0.5rem;
+  font-family: var(--font-interphases);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  pointer-events: none;
+}
+
+.hint-key {
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.1rem 0.35rem;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.hint-sep {
+  opacity: 0.4;
 }
 
 @keyframes photoBloom {
@@ -1455,7 +1582,7 @@ nav {
   }
   .lightbox-img {
     max-width: 95vw;
-    max-height: 78dvh;
+    max-height: 72dvh;
   }
   .lightbox-caption {
     margin-top: 0.75rem;
@@ -1464,6 +1591,18 @@ nav {
   }
   .lightbox-title {
     font-size: 0.85rem;
+  }
+  .lightbox-hints {
+    display: none;
+  }
+  .lightbox-filmstrip {
+    max-width: 94vw;
+    gap: 0.35rem;
+    padding: 0.25rem 0.25rem;
+  }
+  .filmstrip-thumb {
+    width: 36px;
+    height: 36px;
   }
   .lightbox-close {
     top: 0.8rem;
@@ -1489,7 +1628,7 @@ nav {
 footer {
   position: relative;
   z-index: 1;
-  padding: 3rem 1.5rem 2rem;
+  padding: 3.5rem 1.5rem 2.5rem;
   text-align: center;
   border-top: 1px solid var(--border);
   margin-top: auto;
@@ -1521,6 +1660,96 @@ footer .ft-sub {
   text-transform: none;
   color: var(--text-muted);
   margin-top: 0.4rem;
+}
+
+.ft-socials {
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  font-family: var(--font-interphases);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.ft-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.25s, transform 0.25s;
+  padding: 0.2rem 0;
+}
+
+.ft-link:hover {
+  color: var(--text);
+}
+
+.ft-sep {
+  color: rgba(17, 17, 17, 0.25);
+  font-size: 0.6rem;
+}
+
+
+/* ── 12b. RETURN TO TOP (Floating Capsule) ── */
+
+.back-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  background: rgba(250, 248, 245, 0.94);
+  border: 1px solid rgba(17, 17, 17, 0.14);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--text);
+  font-family: var(--font-interphases);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 0.35s ease, transform 0.35s var(--shutter-ease), background 0.25s, border-color 0.25s;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: #ffffff;
+  border-color: rgba(17, 17, 17, 0.32);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.btt-arrow {
+  font-size: 0.8rem;
+  line-height: 1;
+  transition: transform 0.25s var(--shutter-ease);
+}
+
+.back-to-top:hover .btt-arrow {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 600px) {
+  .back-to-top {
+    bottom: 1.25rem;
+    right: 1.25rem;
+    padding: 0.45rem 0.85rem;
+  }
 }
 
 
@@ -1585,13 +1814,16 @@ footer .ft-sub {
 .nav-links a:focus-visible,
 .cat-tab:focus-visible,
 .orient-btn:focus-visible,
-.photo-item:focus-visible {
+.photo-item:focus-visible,
+.ft-link:focus-visible,
+.back-to-top:focus-visible {
   outline: 2px solid var(--text);
   outline-offset: 3px;
 }
 
 .lightbox-close:focus-visible,
-.lightbox-nav:focus-visible {
+.lightbox-nav:focus-visible,
+.filmstrip-thumb:focus-visible {
   outline: 2px solid #ffffff;
   outline-offset: 3px;
 }

@@ -188,6 +188,65 @@ function triggerShutterFlash() {
 }
 
 let lastFocusedElement = null;
+let isLightboxZoomed = false;
+
+function toggleLightboxZoom() {
+  const img = document.getElementById('lightbox-img');
+  if (!img) return;
+  isLightboxZoomed = !isLightboxZoomed;
+  img.classList.toggle('zoomed', isLightboxZoomed);
+}
+
+function resetLightboxZoom() {
+  isLightboxZoomed = false;
+  const img = document.getElementById('lightbox-img');
+  if (img) img.classList.remove('zoomed');
+}
+
+function renderFilmstrip() {
+  const strip = document.getElementById('lightbox-filmstrip');
+  if (!strip) return;
+  strip.innerHTML = '';
+
+  lightboxImages.forEach((image, idx) => {
+    const thumb = document.createElement('button');
+    thumb.type = 'button';
+    thumb.className = 'filmstrip-thumb' + (idx === lightboxIdx ? ' active' : '');
+    thumb.setAttribute('aria-label', `View photo ${idx + 1}: ${image.caption || 'Untitled'}`);
+
+    const img = document.createElement('img');
+    const webpSrc = image.src.replace(/\.jpe?g$/i, '.webp');
+    img.src = webpSrc;
+    img.alt = image.caption || '';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.onerror = () => { img.src = image.src; };
+
+    thumb.appendChild(img);
+    thumb.addEventListener('click', e => {
+      e.stopPropagation();
+      if (lightboxIdx !== idx) {
+        lightboxIdx = idx;
+        updateLightbox();
+      }
+    });
+
+    strip.appendChild(thumb);
+  });
+}
+
+function syncFilmstripActive() {
+  const strip = document.getElementById('lightbox-filmstrip');
+  if (!strip) return;
+  const thumbs = strip.querySelectorAll('.filmstrip-thumb');
+  thumbs.forEach((thumb, idx) => {
+    const isActive = idx === lightboxIdx;
+    thumb.classList.toggle('active', isActive);
+    if (isActive) {
+      thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  });
+}
 
 function openLightbox(images, idx) {
   if (!images || !images.length) return;
@@ -197,6 +256,7 @@ function openLightbox(images, idx) {
   triggerShutterFlash();
   lightboxImages = images;
   lightboxIdx    = Math.max(0, Math.min(idx, images.length - 1));
+  renderFilmstrip();
   updateLightbox();
   lightbox.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -206,6 +266,7 @@ function openLightbox(images, idx) {
 
 function updateLightbox() {
   if (!lightboxImages.length) return;
+  resetLightboxZoom();
   const { src, caption } = lightboxImages[lightboxIdx];
   const img  = document.getElementById('lightbox-img');
   if (img) { 
@@ -218,6 +279,8 @@ function updateLightbox() {
 
   const counterEl = document.getElementById('lightbox-counter');
   if (counterEl) counterEl.textContent = `${String(lightboxIdx + 1).padStart(2, '0')} / ${String(lightboxImages.length).padStart(2, '0')}`;
+
+  syncFilmstripActive();
 
   // Preload neighboring photos for instant transition
   if (lightboxImages.length > 1) {
@@ -233,6 +296,7 @@ function updateLightbox() {
 function closeLightbox() {
   const lightbox = document.getElementById('lightbox');
   if (!lightbox) return;
+  resetLightboxZoom();
   lightbox.classList.remove('open');
   document.body.style.overflow = '';
   if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
@@ -242,11 +306,12 @@ function closeLightbox() {
 
 function lightboxNav(dir) {
   if (!lightboxImages.length) return;
+  resetLightboxZoom();
   lightboxIdx = (lightboxIdx + dir + lightboxImages.length) % lightboxImages.length;
   updateLightbox();
 }
 
-// Backdrop click & Touch Swipe support
+// Backdrop click, Touch Swipe, and Image Zoom toggle
 const lightboxEl = document.getElementById('lightbox');
 if (lightboxEl) {
   lightboxEl.addEventListener('click', function (e) {
@@ -254,6 +319,14 @@ if (lightboxEl) {
       closeLightbox();
     }
   });
+
+  const lbImg = document.getElementById('lightbox-img');
+  if (lbImg) {
+    lbImg.addEventListener('click', e => {
+      e.stopPropagation();
+      toggleLightboxZoom();
+    });
+  }
 
   // Mobile Touch Gestures
   let touchStartX = 0;
@@ -310,7 +383,11 @@ document.addEventListener('keydown', e => {
 
   if (e.key === 'Escape') {
     e.preventDefault();
-    closeLightbox();
+    if (isLightboxZoomed) {
+      resetLightboxZoom();
+    } else {
+      closeLightbox();
+    }
     return;
   }
   if (e.key === 'ArrowLeft') {
@@ -384,6 +461,11 @@ function buildGrid(gridId, rawImages) {
     tag.textContent = `MOMENT ${String(idx + 1).padStart(2, '0')}`;
     figure.appendChild(tag);
 
+    const picture = document.createElement('picture');
+    const sourceWebp = document.createElement('source');
+    sourceWebp.srcset = image.src.replace(/\.jpe?g$/i, '.webp');
+    sourceWebp.type = 'image/webp';
+
     const img = document.createElement('img');
     img.src = image.src;
     img.alt = image.caption || '';
@@ -392,6 +474,9 @@ function buildGrid(gridId, rawImages) {
     img.onerror = () => {
       img.alt = 'Photograph currently being preserved in archive';
     };
+
+    picture.appendChild(sourceWebp);
+    picture.appendChild(img);
 
     const figcaption = document.createElement('figcaption');
     figcaption.className = 'photo-overlay';
@@ -406,7 +491,7 @@ function buildGrid(gridId, rawImages) {
 
     figcaption.appendChild(metaRow);
     figcaption.appendChild(label);
-    figure.appendChild(img);
+    figure.appendChild(picture);
     figure.appendChild(figcaption);
 
     // Interactive 3D micro-tilt only for desktop fine pointers
@@ -654,6 +739,12 @@ function updateNavOnScroll() {
 
   updateOpticalScrollHUD();
 
+  // Return to Surface (Back to Top) visibility toggle
+  const bttBtn = document.getElementById('back-to-top');
+  if (bttBtn) {
+    bttBtn.classList.toggle('visible', window.scrollY > 480);
+  }
+
   if (!sections.length) return;
 
   // Highlight active section & update camera HUD telemetry
@@ -668,6 +759,14 @@ function updateNavOnScroll() {
   });
 
   if (current) updateTelemetryHUD(current.id);
+}
+
+// Return to top button click handler
+const bttBtn = document.getElementById('back-to-top');
+if (bttBtn) {
+  bttBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 }
 
 // requestAnimationFrame-throttled scroll handler
