@@ -781,4 +781,25 @@ window.addEventListener('scroll', () => {
   }
 }, { passive: true });
 
+// Clickable hero floating frames — opens directly into Lightbox
+document.querySelectorAll('.hero-frame').forEach(frame => {
+  const handler = () => {
+    const cat = frame.dataset.cat;
+    const orient = frame.dataset.orient || 'portrait';
+    const idx = parseInt(frame.dataset.idx, 10) || 0;
+    const images = (photoData[cat]?.[orient] || []).map(normalizePhoto);
+    if (images.length) {
+      openLightbox(images, Math.min(idx, images.length - 1));
+    }
+  };
+
+  frame.addEventListener('click', handler);
+  frame.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handler();
+    }
+  });
+});
+
 updateNavOnScroll();
