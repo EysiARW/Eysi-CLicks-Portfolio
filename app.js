@@ -8,7 +8,7 @@
      3. ThemeManager (Archival Daylight / Darkroom Obsidian)
      4. CursorLoupeController (Fine-Pointer Optical Reticle)
      5. LightboxController (Darkroom Loupe, Museum Mat, Slideshow)
-     6. GalleryPresenter (Tabs, Orientation, Series Filter, Contact Sheet)
+     6. GalleryPresenter (Tabs, Orientation, Contact Sheet Proofs)
      7. TelemetryHudController (Scrollspy, Focal Continuum, Local Clock)
      8. Application Bootstrap
    ============================================================ */
@@ -172,20 +172,9 @@ class PortfolioRepository {
     return this.#categories.reduce((sum, cat) => sum + this.getCategoryTotalCount(cat), 0);
   }
 
-  getPhotos(cat, orientation, seriesFilter = 'ALL') {
+  getPhotos(cat, orientation) {
     const rawList = this.#rawStore[cat]?.[orientation] || [];
-    const assets = rawList.map((entry, idx) => new PhotoAsset(entry, cat, orientation, idx));
-    if (!seriesFilter || seriesFilter === 'ALL') return assets;
-    return assets.filter(asset => asset.caption === seriesFilter);
-  }
-
-  getSeriesGroups(cat, orientation) {
-    const assets = this.getPhotos(cat, orientation, 'ALL');
-    const counts = new Map();
-    assets.forEach(asset => {
-      counts.set(asset.caption, (counts.get(asset.caption) || 0) + 1);
-    });
-    return Array.from(counts.entries()).map(([name, count]) => ({ name, count }));
+    return rawList.map((entry, idx) => new PhotoAsset(entry, cat, orientation, idx));
   }
 }
 
@@ -747,12 +736,6 @@ class GalleryPresenter {
     events:        'landscape',
     institutional: 'landscape',
   };
-  #categorySeriesFilter = {
-    predebut:      'ALL',
-    events:        'ALL',
-    institutional: 'ALL',
-  };
-  #viewMode = 'exhibition'; // 'exhibition' | 'contact'
   #renderedSignature = {};
 
   constructor(repository, transitionCoordinator, lightbox, cursorLoupe) {
@@ -793,12 +776,7 @@ class GalleryPresenter {
 
       this.#ensureValidOrientation(cat);
       this.#updateOrientToggleUI(cat);
-      this.#renderSeriesFilterBar(cat);
       this.#ensureRendered(cat);
-
-      requestAnimationFrame(() => {
-        this.balanceGrid('grid-' + cat);
-      });
 
       const url = new URL(window.location.href);
       url.searchParams.set('tab', cat);
@@ -819,76 +797,23 @@ class GalleryPresenter {
 
     this.#transitionCoordinator.run(() => {
       this.#categoryOrientation[cat] = mode;
-      this.#categorySeriesFilter[cat] = 'ALL';
       this.#updateOrientToggleUI(cat);
-      this.#renderSeriesFilterBar(cat);
       this.renderCategory(cat);
-    });
-  }
-
-  setSeriesFilter(seriesName) {
-    const cat = this.activeCategory;
-    if (this.#categorySeriesFilter[cat] === seriesName) return;
-
-    this.#transitionCoordinator.run(() => {
-      this.#categorySeriesFilter[cat] = seriesName;
-      this.#renderSeriesFilterBar(cat);
-      this.renderCategory(cat);
-    });
-  }
-
-  setViewMode(mode) {
-    if (mode !== 'exhibition' && mode !== 'contact') return;
-    if (this.#viewMode === mode) return;
-
-    this.#transitionCoordinator.run(() => {
-      this.#viewMode = mode;
-      document.querySelectorAll('.view-btn[data-view]').forEach(btn => {
-        const isActive = btn.dataset.view === mode;
-        btn.classList.toggle('active', isActive);
-        btn.setAttribute('aria-pressed', String(isActive));
-      });
-
-      this.#renderedSignature = {};
-      this.renderCategory(this.activeCategory);
     });
   }
 
   renderCategory(cat) {
     this.#ensureValidOrientation(cat);
-    const orientation  = this.#categoryOrientation[cat];
-    const seriesFilter = this.#categorySeriesFilter[cat] || 'ALL';
-    const photos       = this.#repository.getPhotos(cat, orientation, seriesFilter);
-    const totalInMode  = this.#repository.getOrientationCount(cat, orientation);
+    const orientation = this.#categoryOrientation[cat];
+    const photos      = this.#repository.getPhotos(cat, orientation);
 
     const grid = document.getElementById('grid-' + cat);
     if (grid) {
       grid.classList.toggle('orient-landscape', orientation === 'landscape');
-      grid.classList.toggle('view-contact', this.#viewMode === 'contact');
     }
 
     this.#buildGridDOM('grid-' + cat, photos);
-    this.#updateStatusReadout(photos.length, totalInMode, orientation, seriesFilter);
-
-    requestAnimationFrame(() => {
-      this.balanceGrid('grid-' + cat);
-    });
-
-    this.#renderedSignature[cat] = `${orientation}:${seriesFilter}:${this.#viewMode}`;
-  }
-
-  balanceGrid(gridId) {
-    const grid = document.getElementById(gridId);
-    if (!grid || grid.offsetParent === null) return;
-
-    const items = Array.from(grid.querySelectorAll('.photo-item'));
-    items.forEach(item => item.classList.remove('fill-row'));
-    if (!items.length || this.#viewMode === 'contact') return;
-
-    const lastRowTop = items[items.length - 1].offsetTop;
-    for (let i = items.length - 1; i >= 0 && items[i].offsetTop === lastRowTop; i--) {
-      items[i].classList.add('fill-row');
-    }
+    this.#renderedSignature[cat] = orientation;
   }
 
   #ensureValidOrientation(cat) {
@@ -904,7 +829,7 @@ class GalleryPresenter {
   }
 
   #ensureRendered(cat) {
-    const expectedSig = `${this.#categoryOrientation[cat]}:${this.#categorySeriesFilter[cat]}:${this.#viewMode}`;
+    const expectedSig = this.#categoryOrientation[cat];
     if (this.#renderedSignature[cat] !== expectedSig) {
       this.renderCategory(cat);
     }
@@ -950,41 +875,6 @@ class GalleryPresenter {
     });
   }
 
-  #renderSeriesFilterBar(cat) {
-    const bar = document.getElementById('series-filter-bar');
-    if (!bar) return;
-    bar.innerHTML = '';
-
-    const orientation  = this.#categoryOrientation[cat];
-    const activeSeries = this.#categorySeriesFilter[cat] || 'ALL';
-    const groups       = this.#repository.getSeriesGroups(cat, orientation);
-    const totalCount   = this.#repository.getOrientationCount(cat, orientation);
-
-    const createPill = (label, value, count) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      const isActive = activeSeries === value;
-      btn.className = 'series-pill' + (isActive ? ' active' : '');
-      btn.setAttribute('aria-pressed', String(isActive));
-      btn.innerHTML = `<span>${label}</span><span class="series-pill-count">${String(count).padStart(2, '0')}</span>`;
-      btn.addEventListener('click', () => this.setSeriesFilter(value));
-      return btn;
-    };
-
-    bar.appendChild(createPill('All Plates', 'ALL', totalCount));
-    groups.forEach(group => {
-      bar.appendChild(createPill(group.name, group.name, group.count));
-    });
-  }
-
-  #updateStatusReadout(shownCount, totalCount, orientation, seriesFilter) {
-    const readout = document.getElementById('archive-status-readout');
-    if (!readout) return;
-    const modeLabel = this.#viewMode === 'contact' ? 'CONTACT SHEET' : 'EXHIBITION';
-    const filterLabel = seriesFilter === 'ALL' ? 'ALL SERIES' : seriesFilter.toUpperCase();
-    readout.textContent = `${modeLabel} · ${String(shownCount).padStart(2, '0')}/${String(totalCount).padStart(2, '0')} ${orientation.toUpperCase()} PLATES · ${filterLabel}`;
-  }
-
   #setupIntersectionObserver() {
     if (!('IntersectionObserver' in window) || this.#transitionCoordinator.prefersReducedMotion) {
       return;
@@ -1010,13 +900,11 @@ class GalleryPresenter {
       empty.className = 'empty-state';
       empty.innerHTML = `
         <p class="empty-state-title">Series Curated in Alternate Format</p>
-        <p class="empty-state-sub">Switch orientation or series filter above to explore this collection.</p>
+        <p class="empty-state-sub">Switch orientation above to explore this collection.</p>
       `;
       grid.appendChild(empty);
       return;
     }
-
-    const isFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
     photos.forEach((asset, idx) => {
       const figure = document.createElement('figure');
@@ -1037,7 +925,7 @@ class GalleryPresenter {
         figure.appendChild(corner);
       });
 
-      // Archival Plate Index Badge
+      // Archival Plate Index Header Strip
       const tag = document.createElement('span');
       tag.className = 'photo-tag';
       tag.textContent = asset.momentTag;
@@ -1063,38 +951,13 @@ class GalleryPresenter {
       const figcaption = document.createElement('figcaption');
       figcaption.className = 'photo-overlay';
 
-      const metaRow = document.createElement('div');
-      metaRow.className = 'photo-meta-row';
-      metaRow.innerHTML = `<span>${asset.plateNumber}</span><span>·</span><span>HELD FOREVER</span>`;
-
       const label = document.createElement('span');
       label.className = 'photo-label';
       label.textContent = asset.caption;
 
-      figcaption.appendChild(metaRow);
       figcaption.appendChild(label);
       figure.appendChild(picture);
       figure.appendChild(figcaption);
-
-      // Subtle 3D micro-tilt on fine pointers when reduced motion is off
-      if (isFinePointer && !this.#transitionCoordinator.prefersReducedMotion && this.#viewMode !== 'contact') {
-        let tiltRAF = null;
-        figure.addEventListener('mousemove', e => {
-          if (tiltRAF) cancelAnimationFrame(tiltRAF);
-          tiltRAF = requestAnimationFrame(() => {
-            const w = figure.offsetWidth || 300;
-            const h = figure.offsetHeight || 380;
-            const x = (e.offsetX / w) - 0.5;
-            const y = (e.offsetY / h) - 0.5;
-            figure.style.transform = `perspective(800px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg) translateY(-3px)`;
-          });
-        }, { passive: true });
-
-        figure.addEventListener('mouseleave', () => {
-          if (tiltRAF) cancelAnimationFrame(tiltRAF);
-          figure.style.transform = '';
-        });
-      }
 
       this.#cursorLoupe?.attachInteractiveTarget(figure, `INSPECT ${asset.plateNumber}`);
 
@@ -1143,19 +1006,6 @@ class GalleryPresenter {
     document.querySelectorAll('.orient-btn[data-orient]').forEach(btn => {
       btn.addEventListener('click', () => this.setOrientation(btn.dataset.orient));
     });
-
-    document.querySelectorAll('.view-btn[data-view]').forEach(btn => {
-      btn.addEventListener('click', () => this.setViewMode(btn.dataset.view));
-    });
-
-    let resizeTimer = null;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        this.#renderedSignature = {};
-        this.renderCategory(this.activeCategory);
-      }, 150);
-    });
   }
 
   #bindHeroFloatingFrames() {
@@ -1166,7 +1016,7 @@ class GalleryPresenter {
         const cat    = frame.dataset.cat;
         const orient = frame.dataset.orient || 'portrait';
         const idx    = parseInt(frame.dataset.idx, 10) || 0;
-        const photos = this.#repository.getPhotos(cat, orient, 'ALL');
+        const photos = this.#repository.getPhotos(cat, orient);
         if (photos.length) {
           this.#lightbox.open(photos, Math.min(idx, photos.length - 1), null);
         }

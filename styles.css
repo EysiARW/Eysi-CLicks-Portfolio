@@ -1323,7 +1323,7 @@ html[data-theme="dark"] .theme-icon-moon { display: none; }
 }
 
 
-/* ── 7. GALLERY SECTION & LUXURY EXHIBITION CONTROLS ── */
+/* ── 7. GALLERY SECTION & ARCHIVE CONTROLS ── */
 
 #gallery {
   position: relative;
@@ -1483,16 +1483,14 @@ html[data-theme="dark"] .cat-tab.active .cat-tab-count {
   background: var(--bg2);
 }
 
-/* Orientation Toggle & View Switcher */
-.orient-toggle,
-.view-toggle {
+/* Orientation Toggle */
+.orient-toggle {
   display: flex;
   flex-shrink: 0;
   user-select: none;
 }
 
-.orient-btn,
-.view-btn {
+.orient-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
@@ -1511,8 +1509,7 @@ html[data-theme="dark"] .cat-tab.active .cat-tab-count {
   touch-action: manipulation;
 }
 
-.orient-icon,
-.view-btn svg {
+.orient-icon {
   width: 14px;
   height: 14px;
   flex-shrink: 0;
@@ -1524,15 +1521,11 @@ html[data-theme="dark"] .cat-tab.active .cat-tab-count {
   opacity: 0.7;
 }
 
-.orient-btn:first-child,
-.view-btn:first-child       { border-radius: 2px 0 0 2px; }
-.orient-btn:last-child,
-.view-btn:last-child        { border-radius: 0 2px 2px 0; }
-.orient-btn:not(:first-child),
-.view-btn:not(:first-child) { margin-left: -1px; }
+.orient-btn:first-child       { border-radius: 2px 0 0 2px; }
+.orient-btn:last-child        { border-radius: 0 2px 2px 0; }
+.orient-btn:not(:first-child) { margin-left: -1px; }
 
-.orient-btn.active,
-.view-btn.active {
+.orient-btn.active {
   position: relative;
   z-index: 1;
   color: var(--bg);
@@ -1541,8 +1534,7 @@ html[data-theme="dark"] .cat-tab.active .cat-tab-count {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
-.orient-btn:not(.active):hover,
-.view-btn:not(.active):hover {
+.orient-btn:not(.active):hover {
   position: relative;
   z-index: 1;
   color: var(--text);
@@ -1555,70 +1547,6 @@ html[data-theme="dark"] .cat-tab.active .cat-tab-count {
   opacity: 0.28;
   cursor: not-allowed;
   pointer-events: none;
-}
-
-/* Dynamic Series Filter Pills Bar */
-.series-filter-wrap {
-  max-width: 1380px;
-  margin: 0 auto 2.2rem;
-  padding: 0.85rem 1.5rem;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.85rem;
-}
-
-.series-filter-bar {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-}
-
-.series-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.34rem 0.85rem;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text-muted);
-  font-family: var(--font-interphases);
-  font-size: 0.62rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.22s var(--shutter-ease);
-}
-
-.series-pill:hover {
-  color: var(--text);
-  border-color: var(--border-strong);
-}
-
-.series-pill.active {
-  background: var(--text);
-  color: var(--bg);
-  border-color: var(--text);
-}
-
-.series-pill-count {
-  font-family: var(--font-mono);
-  font-size: 0.52rem;
-  opacity: 0.72;
-}
-
-.archive-status-readout {
-  font-family: var(--font-mono);
-  font-size: 0.56rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-subtle);
 }
 
 @media (max-width: 720px) {
@@ -1637,21 +1565,10 @@ html[data-theme="dark"] .cat-tab.active .cat-tab-count {
     padding: 0.58rem 0.75rem;
     font-size: 0.68rem;
   }
-  .view-btn-label {
-    display: none;
-  }
-  .series-filter-wrap {
-    justify-content: center;
-    text-align: center;
-    padding: 0.75rem 1rem;
-  }
-  .series-filter-bar {
-    justify-content: center;
-  }
 }
 
 
-/* ── 8. CATEGORY PANELS & PHOTO GRIDS ── */
+/* ── 8. CATEGORY PANELS & ARCHIVAL CONTACT SHEET GRIDS ── */
 
 .cat-panel {
   display: none;
@@ -1687,54 +1604,39 @@ html[data-theme="dark"] .cat-tab.active .cat-tab-count {
   margin: 0 auto;
 }
 
-/* Exhibition Justified Grid */
+/* Archival Contact Sheet Proof Grid */
 .photo-grid {
   --cols: 2;
-  --gap: 0.85rem;
+  --gap: 1.1rem;
   display: flex;
   flex-wrap: wrap;
   gap: var(--gap);
 }
 
 @media (min-width: 600px) {
-  .photo-grid                  { --cols: 3; }
-  .photo-grid.orient-landscape { --cols: 2; }
+  .photo-grid,
+  .photo-grid.orient-landscape { --cols: 4; }
 }
 
 @media (min-width: 960px) {
-  .photo-grid                  { --cols: 4; --gap: 1rem; }
-  .photo-grid.orient-landscape { --cols: 3; }
-}
-
-/* Contact Sheet Proof View Mode (.view-contact) */
-.photo-grid.view-contact {
-  --cols: 2;
-  --gap: 1.1rem;
-}
-
-@media (min-width: 600px) {
-  .photo-grid.view-contact,
-  .photo-grid.view-contact.orient-landscape { --cols: 4; }
-}
-
-@media (min-width: 960px) {
-  .photo-grid.view-contact,
-  .photo-grid.view-contact.orient-landscape { --cols: 5; --gap: 1.25rem; }
+  .photo-grid,
+  .photo-grid.orient-landscape { --cols: 5; --gap: 1.25rem; }
 }
 
 
-/* ── 9. PHOTO PLATE ITEM, VIEWFINDER RETICLES & EDITORIAL PLAQUE ── */
+/* ── 9. CONTACT SHEET PROOF ITEM & VIEWFINDER RETICLES ── */
 
 .photo-item {
   flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols));
-  aspect-ratio: 4 / 5;
+  display: flex;
+  flex-direction: column;
+  padding: 0.45rem 0.45rem 0.6rem;
   position: relative;
   cursor: pointer;
   overflow: hidden;
   border-radius: 2px;
   background: var(--surface);
-  border: 1px solid var(--border);
-  display: block;
+  border: 1px solid var(--border-strong);
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   box-shadow: var(--shadow-ambient);
@@ -1753,26 +1655,29 @@ html[data-theme="dark"] .cat-tab.active .cat-tab-count {
 }
 
 .photo-item:hover {
-  border-color: var(--border-strong);
+  border-color: var(--text);
   box-shadow: var(--shadow-elevated);
 }
 
-.photo-item.fill-row {
-  flex-grow: 1;
-}
-
-.photo-grid.orient-landscape .photo-item {
-  aspect-ratio: 3 / 2;
+.photo-item picture {
+  display: block;
+  overflow: hidden;
+  border-radius: 1px;
 }
 
 .photo-item img {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 4 / 5;
   object-fit: cover;
+  border-radius: 1px;
   display: block;
   transform: translateZ(0);
   transition: transform 0.7s var(--shutter-ease), filter 0.55s var(--shutter-ease);
   filter: brightness(0.98) contrast(1.02);
+}
+
+.photo-grid.orient-landscape .photo-item img {
+  aspect-ratio: 3 / 2;
 }
 
 .photo-item:hover img {
@@ -1780,180 +1685,74 @@ html[data-theme="dark"] .cat-tab.active .cat-tab-count {
   filter: brightness(1.02) contrast(1.04);
 }
 
-/* Contact Sheet Proof Strip Styling */
-.photo-grid.view-contact .photo-item {
-  display: flex;
-  flex-direction: column;
-  aspect-ratio: auto;
-  padding: 0.45rem 0.45rem 0.6rem;
-  background: var(--surface);
-  border: 1px solid var(--border-strong);
-}
-
-.photo-grid.view-contact .photo-item.fill-row {
-  flex-grow: 0;
-}
-
-.photo-grid.view-contact .photo-item img {
-  aspect-ratio: 4 / 5;
-  border-radius: 1px;
-}
-
-.photo-grid.view-contact.orient-landscape .photo-item img {
-  aspect-ratio: 3 / 2;
-}
-
-.photo-grid.view-contact .photo-tag {
-  position: static;
-  opacity: 1;
-  transform: none;
-  background: transparent;
-  color: var(--text-muted);
-  border: none;
-  padding: 0 0 0.35rem 0;
-  font-size: 0.5rem;
-  backdrop-filter: none;
-  display: flex;
-  justify-content: space-between;
-}
-
-.photo-grid.view-contact .photo-tag::after {
-  content: '35MM PROOF';
-  opacity: 0.65;
-}
-
-.photo-grid.view-contact .photo-overlay {
-  position: static;
-  opacity: 1;
-  background: transparent;
-  padding: 0.45rem 0.1rem 0;
-}
-
-.photo-grid.view-contact .photo-meta-row {
-  display: none;
-}
-
-.photo-grid.view-contact .photo-label {
-  color: var(--text);
-  font-size: 0.78rem;
-  transform: none;
-}
-
 /* 4 Camera Viewfinder Focus Reticles on Hover */
 .photo-item .vf-c {
   position: absolute;
   width: 10px;
   height: 10px;
-  border-color: #ffffff;
+  border-color: var(--text);
   border-style: solid;
   opacity: 0;
   transition: opacity 0.3s, transform 0.3s var(--shutter-ease);
   z-index: 3;
   pointer-events: none;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
 }
 
-.photo-item .vf-c-tl { top: 10px; left: 10px; border-width: 1.5px 0 0 1.5px; transform: translate(-4px, -4px); }
-.photo-item .vf-c-tr { top: 10px; right: 10px; border-width: 1.5px 1.5px 0 0; transform: translate(4px, -4px); }
-.photo-item .vf-c-bl { bottom: 10px; left: 10px; border-width: 0 0 1.5px 1.5px; transform: translate(-4px, 4px); }
-.photo-item .vf-c-br { bottom: 10px; right: 10px; border-width: 0 1.5px 1.5px 0; transform: translate(4px, 4px); }
+.photo-item .vf-c-tl { top: 6px; left: 6px; border-width: 1.5px 0 0 1.5px; transform: translate(-4px, -4px); }
+.photo-item .vf-c-tr { top: 6px; right: 6px; border-width: 1.5px 1.5px 0 0; transform: translate(4px, -4px); }
+.photo-item .vf-c-bl { bottom: 6px; left: 6px; border-width: 0 0 1.5px 1.5px; transform: translate(-4px, 4px); }
+.photo-item .vf-c-br { bottom: 6px; right: 6px; border-width: 0 1.5px 1.5px 0; transform: translate(4px, 4px); }
 
 .photo-item:hover .vf-c {
-  opacity: 0.95;
+  opacity: 0.85;
   transform: translate(0, 0);
 }
 
-/* Frame Exposure Index Tag */
+/* Frame Exposure Index Header Strip (PLATE NN · 35MM PROOF) */
 .photo-tag {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  font-family: var(--font-mono);
-  font-size: 0.52rem;
-  letter-spacing: 0.16em;
-  color: #faf8f5;
-  background: rgba(15, 15, 17, 0.86);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  padding: 0.2rem 0.5rem;
-  border-radius: 2px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 2;
-  opacity: 0;
-  transform: translateY(-4px);
-  transition: opacity 0.35s, transform 0.35s var(--shutter-ease);
-}
-
-.photo-item:hover .photo-tag {
+  position: static;
   opacity: 1;
-  transform: translateY(0);
-}
-
-/* Editorial Museum Plaque Overlay (Fixed high-contrast white on obsidian gradient) */
-.photo-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(10, 10, 12, 0.90) 0%, rgba(10, 10, 12, 0.38) 42%, transparent 82%);
-  opacity: 0;
-  transition: opacity 0.35s var(--shutter-ease);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 1.15rem 1rem;
-}
-
-.photo-item:hover .photo-overlay {
-  opacity: 1;
-}
-
-.photo-meta-row {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
+  transform: none;
   font-family: var(--font-mono);
   font-size: 0.5rem;
   letter-spacing: 0.16em;
-  color: rgba(250, 248, 245, 0.72);
-  margin-bottom: 0.25rem;
-  text-transform: uppercase;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  padding: 0 0 0.35rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.photo-tag::after {
+  content: '35MM PROOF';
+  opacity: 0.65;
+}
+
+/* Contact Sheet Proof Footer Caption */
+.photo-overlay {
+  position: static;
+  opacity: 1;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  padding: 0.45rem 0.1rem 0;
 }
 
 .photo-label {
   font-family: var(--font-garamond);
-  font-size: 1.05rem;
+  font-size: 0.82rem;
   font-weight: 600;
   font-style: italic;
   letter-spacing: 0.02em;
-  color: #ffffff;
-  transform: translateY(4px);
-  transition: transform 0.35s var(--shutter-ease);
+  color: var(--text);
+  transform: none;
 }
 
-.photo-item:hover .photo-label {
-  transform: translateY(0);
-}
-
-/* Touch screen adjustments: visible titles without needing mouse hover */
 @media (hover: none) {
   .photo-item img {
     filter: brightness(1) contrast(1.02);
-  }
-  .photo-item .photo-tag {
-    opacity: 0.92;
-    transform: translateY(0);
-  }
-  .photo-grid:not(.view-contact) .photo-overlay {
-    opacity: 1;
-    background: linear-gradient(to top, rgba(10, 10, 12, 0.85) 0%, transparent 55%);
-    padding: 0.7rem;
-  }
-  .photo-grid:not(.view-contact) .photo-label {
-    transform: translateY(0);
-    font-size: 0.85rem;
-    color: #ffffff;
-  }
-  .photo-meta-row {
-    display: none;
   }
 }
 
@@ -2655,8 +2454,6 @@ footer .ft-sub {
 .about-archive-link:focus-visible,
 .cat-tab:focus-visible,
 .orient-btn:focus-visible,
-.view-btn:focus-visible,
-.series-pill:focus-visible,
 .photo-item:focus-visible,
 .hero-frame:focus-visible,
 .ft-link:focus-visible,
