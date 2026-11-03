@@ -330,7 +330,6 @@ class CursorLoupeController {
 
 class LightboxController {
   #lightboxEl;
-  #frameWrapEl;
   #imgEl;
   #titleEl;
   #plateNoEl;
@@ -339,7 +338,6 @@ class LightboxController {
   #exifEl;
   #filmstripEl;
   #slideshowBarEl;
-  #matBtn;
   #playBtn;
   #playLabel;
   #zoomBtn;
@@ -350,7 +348,6 @@ class LightboxController {
   #images = [];
   #currentIndex = 0;
   #isZoomed = false;
-  #hasMat = false;
   #slideshowInterval = null;
   #lastFocusedElement = null;
   #activeSourceFigure = null;
@@ -359,7 +356,6 @@ class LightboxController {
     this.#transitionCoordinator = transitionCoordinator;
     this.#cursorLoupe    = cursorLoupe;
     this.#lightboxEl     = document.getElementById('lightbox');
-    this.#frameWrapEl    = document.getElementById('lightbox-frame-wrap');
     this.#imgEl          = document.getElementById('lightbox-img');
     this.#titleEl        = document.getElementById('lightbox-title');
     this.#plateNoEl      = document.getElementById('lightbox-plate-no');
@@ -368,7 +364,6 @@ class LightboxController {
     this.#exifEl         = document.getElementById('lightbox-exif');
     this.#filmstripEl    = document.getElementById('lightbox-filmstrip');
     this.#slideshowBarEl = document.getElementById('lightbox-slideshow-bar');
-    this.#matBtn         = document.getElementById('lb-mat-btn');
     this.#playBtn        = document.getElementById('lb-play-btn');
     this.#playLabel      = document.getElementById('lb-play-label');
     this.#zoomBtn        = document.getElementById('lb-zoom-btn');
@@ -447,15 +442,6 @@ class LightboxController {
     this.#imgEl.classList.toggle('zoomed', this.#isZoomed);
     if (this.#zoomBtn) {
       this.#zoomBtn.setAttribute('aria-pressed', String(this.#isZoomed));
-    }
-  }
-
-  toggleMuseumMat() {
-    if (!this.#frameWrapEl) return;
-    this.#hasMat = !this.#hasMat;
-    this.#frameWrapEl.classList.toggle('has-mat', this.#hasMat);
-    if (this.#matBtn) {
-      this.#matBtn.setAttribute('aria-pressed', String(this.#hasMat));
     }
   }
 
@@ -603,13 +589,6 @@ class LightboxController {
       });
     }
 
-    if (this.#matBtn) {
-      this.#matBtn.addEventListener('click', e => {
-        e.stopPropagation();
-        this.toggleMuseumMat();
-      });
-    }
-
     if (this.#playBtn) {
       this.#playBtn.addEventListener('click', e => {
         e.stopPropagation();
@@ -686,11 +665,6 @@ class LightboxController {
       if (e.key === 'ArrowRight') {
         e.preventDefault();
         this.navigate(1);
-        return;
-      }
-      if (e.key === 'm' || e.key === 'M') {
-        e.preventDefault();
-        this.toggleMuseumMat();
         return;
       }
       if (e.key === 'p' || e.key === 'P') {
