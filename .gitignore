@@ -5,6 +5,18 @@ Thumbs.db
 # Editor Settings
 .vscode/
 
-# Backup & uncompressed assets (optional)
+# Backup & uncompressed assets
 .originals/
 *.original.*
+
+# Agentic / SpecKit tooling artifacts
+.agents/
+.specify/
+specs/
+
+# Project testing & planning documentation
+PROJECT.md
+TEST_INFRA.md
+TEST_READY.md
+test-runner.js
+tests/
