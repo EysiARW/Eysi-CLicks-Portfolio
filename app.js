@@ -391,6 +391,10 @@ class LightboxController {
     return Boolean(this.#lightboxEl && this.#lightboxEl.classList.contains('open'));
   }
 
+  get currentIndex() {
+    return this.#currentIndex;
+  }
+
   open(images, index, sourceFigure = null) {
     if (!images || !images.length || !this.#lightboxEl) return;
     this.#cursorLoupe?.hide();
@@ -561,7 +565,10 @@ class LightboxController {
 
     if (this.#imgEl) {
       this.#imgEl.src = current.src;
-      this.#imgEl.alt = current.caption || 'Portfolio photo';
+      const catLabel = current.categoryLabel || 'ARCHIVE PLATE';
+      const plateNo = current.plateNumber || `PLATE ${String(this.#currentIndex + 1).padStart(2, '0')}`;
+      const captionText = current.caption || 'Archival photograph';
+      this.#imgEl.alt = `${captionText} — ${catLabel} (${plateNo})`;
     }
     if (this.#titleEl) {
       this.#titleEl.textContent = current.caption || 'Cherished Moment';
@@ -620,7 +627,7 @@ class LightboxController {
 
       const img = document.createElement('img');
       img.src = image.webpSrc || image.src.replace(/\.jpe?g$/i, '.webp');
-      img.alt = image.caption || '';
+      img.alt = `Thumbnail preview for ${image.caption || 'plate'} (${image.plateNumber || String(idx + 1).padStart(2, '0')})`;
       img.loading = 'lazy';
       img.decoding = 'async';
       img.onerror = () => { img.src = image.src; };
@@ -1049,7 +1056,9 @@ class GalleryPresenter {
 
       const img = document.createElement('img');
       img.src = asset.src;
-      img.alt = asset.caption;
+      img.alt = `${asset.caption} — ${asset.categoryLabel} (${asset.plateNumber})`;
+      img.width = asset.orientation === 'portrait' ? 800 : 1200;
+      img.height = asset.orientation === 'portrait' ? 1000 : 800;
       img.loading = 'lazy';
       img.decoding = 'async';
       img.onerror = () => {
