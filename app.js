@@ -97,14 +97,17 @@ class PhotoAsset {
   }
 
   static #normalizeEntry(entry) {
+    if (!entry || (typeof entry !== 'object' && typeof entry !== 'string')) {
+      return { src: '', caption: 'Cherished Moment' };
+    }
     if (typeof entry !== 'string') {
-      return { src: entry.src, caption: entry.caption || 'Untitled Moment' };
+      return { src: (entry && entry.src) || '', caption: (entry && entry.caption) || 'Untitled Moment' };
     }
     const filename = entry.split('/').pop().split('.')[0];
     const caption = filename
       .replace(/[-_]+/g, ' ')
       .replace(/\b\w/g, c => c.toUpperCase());
-    return { src: entry, caption };
+    return { src: entry, caption: caption || 'Cherished Moment' };
   }
 
   get src()         { return this.#src; }
@@ -328,6 +331,13 @@ class CursorLoupeController {
 
 /* ── 5. LIGHTBOX CONTROLLER ("THE DARKROOM LOUPE") ── */
 
+const LightboxState = Object.freeze({
+  CLOSED: 0,
+  VIEWING: 1,
+  ZOOMED: 2,
+  SLIDESHOW: 3,
+});
+
 class LightboxController {
   #lightboxEl;
   #imgEl;
@@ -345,6 +355,7 @@ class LightboxController {
   #transitionCoordinator;
   #cursorLoupe;
 
+  #state = LightboxState.CLOSED;
   #images = [];
   #currentIndex = 0;
   #isZoomed = false;
@@ -372,6 +383,10 @@ class LightboxController {
     this.#bindEvents();
   }
 
+  get state() {
+    return this.#state;
+  }
+
   get isOpen() {
     return Boolean(this.#lightboxEl && this.#lightboxEl.classList.contains('open'));
   }
@@ -382,6 +397,7 @@ class LightboxController {
     this.#lastFocusedElement = document.activeElement;
     this.#images = images;
     this.#currentIndex = Math.max(0, Math.min(index, images.length - 1));
+    this.#state = LightboxState.VIEWING;
 
     this.#clearSourceTransitionClass();
     if (sourceFigure) {
@@ -410,6 +426,18 @@ class LightboxController {
     if (!this.#lightboxEl || !this.isOpen) return;
     this.stopSlideshow();
     this.#resetZoom();
+    this.#state = LightboxState.CLOSED;
+
+    // Clear photo URL hash cleanly
+    if (window.history && typeof window.history.replaceState === 'function') {
+      try {
+        const cleanUrl = window.location.pathname + (window.location.search || '');
+        window.history.replaceState(null, '', cleanUrl);
+      } catch (_) {}
+    }
+    if (window.location && window.location.hash) {
+      window.location.hash = '';
+    }
 
     const restoreTarget = this.#lastFocusedElement;
     const sourceFigure = this.#activeSourceFigure;
@@ -431,22 +459,46 @@ class LightboxController {
 
   navigate(dir) {
     if (!this.#images.length) return;
-    this.#resetZoom();
+    if (this.#state === LightboxState.ZOOMED || this.#isZoomed) {
+      this.#resetZoom();
+      this.#state = LightboxState.VIEWING;
+    } else if (this.#state === LightboxState.SLIDESHOW || this.#slideshowInterval) {
+      if (this.#slideshowInterval) {
+        clearInterval(this.#slideshowInterval);
+        this.#slideshowInterval = window.setInterval(() => {
+          this.navigate(1);
+        }, 3500);
+      }
+    }
     this.#currentIndex = (this.#currentIndex + dir + this.#images.length) % this.#images.length;
     this.#updateView();
   }
 
   toggleZoom() {
     if (!this.#imgEl) return;
-    this.#isZoomed = !this.#isZoomed;
-    this.#imgEl.classList.toggle('zoomed', this.#isZoomed);
-    if (this.#zoomBtn) {
-      this.#zoomBtn.setAttribute('aria-pressed', String(this.#isZoomed));
+    if (this.#state === LightboxState.SLIDESHOW || this.#slideshowInterval) {
+      this.stopSlideshow();
+      this.#isZoomed = true;
+      this.#state = LightboxState.ZOOMED;
+      this.#imgEl.classList.add('zoomed');
+      if (this.#zoomBtn) {
+        this.#zoomBtn.setAttribute('aria-pressed', 'true');
+      }
+    } else if (this.#state === LightboxState.ZOOMED || this.#isZoomed) {
+      this.#resetZoom();
+      this.#state = LightboxState.VIEWING;
+    } else {
+      this.#isZoomed = true;
+      this.#state = LightboxState.ZOOMED;
+      this.#imgEl.classList.add('zoomed');
+      if (this.#zoomBtn) {
+        this.#zoomBtn.setAttribute('aria-pressed', 'true');
+      }
     }
   }
 
   toggleSlideshow() {
-    if (this.#slideshowInterval) {
+    if (this.#state === LightboxState.SLIDESHOW || this.#slideshowInterval) {
       this.stopSlideshow();
     } else {
       this.startSlideshow();
@@ -455,6 +507,8 @@ class LightboxController {
 
   startSlideshow() {
     if (this.#slideshowInterval || this.#images.length <= 1) return;
+    this.#resetZoom();
+    this.#state = LightboxState.SLIDESHOW;
     if (this.#playBtn) this.#playBtn.setAttribute('aria-pressed', 'true');
     if (this.#playLabel) this.#playLabel.textContent = 'Pause';
     if (this.#slideshowBarEl) this.#slideshowBarEl.classList.add('playing');
@@ -469,6 +523,9 @@ class LightboxController {
       clearInterval(this.#slideshowInterval);
       this.#slideshowInterval = null;
     }
+    if (this.#state === LightboxState.SLIDESHOW) {
+      this.#state = LightboxState.VIEWING;
+    }
     if (this.#playBtn) this.#playBtn.setAttribute('aria-pressed', 'false');
     if (this.#playLabel) this.#playLabel.textContent = 'Slideshow';
     if (this.#slideshowBarEl) this.#slideshowBarEl.classList.remove('playing');
@@ -476,6 +533,9 @@ class LightboxController {
 
   #resetZoom() {
     this.#isZoomed = false;
+    if (this.#state === LightboxState.ZOOMED) {
+      this.#state = LightboxState.VIEWING;
+    }
     if (this.#imgEl) this.#imgEl.classList.remove('zoomed');
     if (this.#zoomBtn) this.#zoomBtn.setAttribute('aria-pressed', 'false');
   }
@@ -519,6 +579,21 @@ class LightboxController {
       this.#exifEl.textContent = current.opticalTelemetry;
     }
 
+    // ARIA live announcement
+    const announcer = document.getElementById('gallery-announcer');
+    if (announcer && current) {
+      const plate = current.plateNumber || `Plate ${this.#currentIndex + 1}`;
+      const caption = current.caption || 'Photo';
+      announcer.textContent = `${plate}: ${caption} (${this.#currentIndex + 1} of ${this.#images.length})`;
+    }
+
+    // Synchronize URL hash with active photo slug
+    const slug = (current.src && current.src.split('/').pop().replace(/\.[^.]+$/, '')) || String(this.#currentIndex + 1);
+    const newHash = `#photo-${slug}`;
+    if (window.location && window.location.hash !== newHash) {
+      window.location.hash = newHash;
+    }
+
     this.#syncFilmstripActive();
 
     // Preload adjacent frames for zero-latency browsing
@@ -537,7 +612,10 @@ class LightboxController {
     this.#images.forEach((image, idx) => {
       const thumb = document.createElement('button');
       thumb.type = 'button';
-      thumb.className = 'filmstrip-thumb' + (idx === this.#currentIndex ? ' active' : '');
+      const isActive = idx === this.#currentIndex;
+      thumb.className = 'filmstrip-thumb' + (isActive ? ' active' : '');
+      thumb.setAttribute('role', 'tab');
+      thumb.setAttribute('aria-selected', String(isActive));
       thumb.setAttribute('aria-label', `View photo ${idx + 1}: ${image.caption || 'Untitled'}`);
 
       const img = document.createElement('img');
@@ -567,10 +645,46 @@ class LightboxController {
     thumbs.forEach((thumb, idx) => {
       const isActive = idx === this.#currentIndex;
       thumb.classList.toggle('active', isActive);
+      thumb.setAttribute('aria-selected', String(isActive));
       if (isActive) {
         thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       }
     });
+  }
+
+  #handleHashChange(evt) {
+    let hash = window.location?.hash || '';
+    if (evt && evt.newURL) {
+      try {
+        const u = new URL(evt.newURL);
+        if (u.hash) hash = u.hash;
+      } catch (_) {
+        const hashIdx = evt.newURL.indexOf('#');
+        if (hashIdx !== -1) hash = evt.newURL.slice(hashIdx);
+      }
+    }
+    if (!hash || !hash.startsWith('#photo-')) {
+      if (this.isOpen) {
+        this.close();
+      }
+      return;
+    }
+
+    const current = this.#images[this.#currentIndex];
+    const currentSlug = (current?.src && current.src.split('/').pop().replace(/\.[^.]+$/, '')) || String(this.#currentIndex + 1);
+    if (`#photo-${currentSlug}` === hash) return;
+
+    const targetSlug = hash.replace(/^#photo-/, '').toLowerCase();
+    const foundIdx = this.#images.findIndex((img, idx) => {
+      const slug = (img.src && img.src.split('/').pop().replace(/\.[^.]+$/, '')) || String(idx + 1);
+      return slug.toLowerCase() === targetSlug;
+    });
+
+    if (foundIdx !== -1) {
+      this.#resetZoom();
+      this.#currentIndex = foundIdx;
+      this.#updateView();
+    }
   }
 
   #bindEvents() {
@@ -581,6 +695,30 @@ class LightboxController {
         this.close();
       }
     });
+
+    const closeBtn = document.getElementById('lightbox-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        this.close();
+      });
+    }
+
+    const prevBtn = document.getElementById('lightbox-prev');
+    if (prevBtn) {
+      prevBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        this.navigate(-1);
+      });
+    }
+
+    const nextBtn = document.getElementById('lightbox-next');
+    if (nextBtn) {
+      nextBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        this.navigate(1);
+      });
+    }
 
     if (this.#imgEl) {
       this.#imgEl.addEventListener('click', e => {
@@ -602,6 +740,13 @@ class LightboxController {
         this.toggleZoom();
       });
     }
+
+    window.addEventListener('hashchange', evt => {
+      this.#handleHashChange(evt);
+    });
+    window.addEventListener('popstate', evt => {
+      this.#handleHashChange(evt);
+    });
 
     // Touch swipe navigation
     let touchStartX = 0;
@@ -891,14 +1036,6 @@ class GalleryPresenter {
         this.#revealObserver.observe(figure);
       }
 
-      // 4 Viewfinder focus corners
-      ['tl', 'tr', 'bl', 'br'].forEach(pos => {
-        const corner = document.createElement('span');
-        corner.className = `vf-c vf-c-${pos}`;
-        corner.setAttribute('aria-hidden', 'true');
-        figure.appendChild(corner);
-      });
-
       // Archival Plate Index Header Strip
       const tag = document.createElement('span');
       tag.className = 'photo-tag';
@@ -1012,6 +1149,29 @@ class GalleryPresenter {
       ? requestedTab
       : this.activeCategory;
     this.switchTab(startCat, false);
+    this.#initHashPhoto();
+  }
+
+  #initHashPhoto() {
+    const hash = window.location?.hash || '';
+    if (!hash || !hash.startsWith('#photo-')) return;
+    const targetSlug = hash.replace(/^#photo-/, '').toLowerCase();
+
+    for (const cat of this.#repository.getCategories()) {
+      for (const orient of ['portrait', 'landscape']) {
+        const photos = this.#repository.getPhotos(cat, orient);
+        const idx = photos.findIndex((p, i) => {
+          const s = (p.src && p.src.split('/').pop().replace(/\.[^.]+$/, '')) || String(i + 1);
+          return s.toLowerCase() === targetSlug;
+        });
+        if (idx !== -1) {
+          this.switchTab(cat, false);
+          this.setOrientation(orient);
+          this.#lightbox.open(photos, idx, null);
+          return;
+        }
+      }
+    }
   }
 }
 
@@ -1023,12 +1183,7 @@ class TelemetryHudController {
   #navLinks;
   #sections;
   #hudChapter;
-  #focalBar;
-  #focalThumb;
-  #focalMarks;
   #bttBtn;
-  #vfCorners;
-  #clockEl;
   #currentSectionId = null;
 
   static #CHAPTERS = {
@@ -1045,20 +1200,10 @@ class TelemetryHudController {
       .map(link => document.getElementById(link.dataset.section))
       .filter(Boolean);
     this.#hudChapter = document.getElementById('hud-chapter');
-    this.#focalBar   = document.getElementById('focal-bar');
-    this.#focalThumb = document.getElementById('focal-thumb');
-    this.#focalMarks = document.querySelectorAll('.focal-val');
     this.#bttBtn     = document.getElementById('back-to-top');
-    this.#clockEl    = document.getElementById('ft-local-time');
-    this.#vfCorners  = {
-      tl: document.querySelector('.vf-tl'),
-      tr: document.querySelector('.vf-tr'),
-      bl: document.querySelector('.vf-bl'),
-      br: document.querySelector('.vf-br'),
-    };
 
     this.#bindScroll();
-    this.#initLocalClock();
+    this.#setupScrollspy();
     this.updateOnScroll();
   }
 
@@ -1066,55 +1211,36 @@ class TelemetryHudController {
     if (this.#navEl) {
       this.#navEl.classList.toggle('is-scrolled', window.scrollY > 50);
     }
-
-    this.#updateOpticalContinuum();
-
     if (this.#bttBtn) {
       this.#bttBtn.classList.toggle('visible', window.scrollY > 480);
     }
+  }
 
+  #setupScrollspy() {
     if (!this.#sections.length) return;
-
-    const scrollPos = window.scrollY + 180;
-    let current = this.#sections[0];
-    this.#sections.forEach(section => {
-      if (section.offsetTop <= scrollPos) current = section;
-    });
-
-    this.#navLinks.forEach(link => {
-      link.classList.toggle('active', link.dataset.section === current.id);
-    });
-
-    if (current && this.#currentSectionId !== current.id) {
-      this.#currentSectionId = current.id;
-      if (this.#hudChapter) {
-        this.#hudChapter.textContent = TelemetryHudController.#CHAPTERS[current.id] || TelemetryHudController.#CHAPTERS.hero;
-      }
+    if (typeof IntersectionObserver !== 'undefined') {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            this.#setActiveSection(entry.target.id);
+          }
+        });
+      }, {
+        rootMargin: '-20% 0px -60% 0px',
+        threshold: 0.1
+      });
+      this.#sections.forEach(sec => observer.observe(sec));
     }
   }
 
-  #updateOpticalContinuum() {
-    const isDesktop = window.innerWidth > 1024;
-    if (isDesktop) {
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollPct = docHeight > 0 ? Math.min(1, Math.max(0, window.scrollY / docHeight)) : 0;
-
-      if (this.#focalBar)   this.#focalBar.style.height = `${scrollPct * 100}%`;
-      if (this.#focalThumb) this.#focalThumb.style.top  = `${scrollPct * 100}%`;
-
-      this.#focalMarks.forEach(mark => {
-        const target = parseFloat(mark.dataset.scroll || '0');
-        mark.classList.toggle('active', Math.abs(scrollPct - target) < 0.18);
-      });
-    }
-
-    if (window.scrollY < window.innerHeight * 1.1) {
-      const shift = Math.min(22, window.scrollY * 0.05);
-      const { tl, tr, bl, br } = this.#vfCorners;
-      if (tl) tl.style.transform = `translate3d(${-shift}px, ${-shift}px, 0)`;
-      if (tr) tr.style.transform = `translate3d(${shift}px, ${-shift}px, 0)`;
-      if (bl) bl.style.transform = `translate3d(${-shift}px, ${shift}px, 0)`;
-      if (br) br.style.transform = `translate3d(${shift}px, ${shift}px, 0)`;
+  #setActiveSection(id) {
+    if (!id || this.#currentSectionId === id) return;
+    this.#currentSectionId = id;
+    this.#navLinks.forEach(link => {
+      link.classList.toggle('active', link.dataset.section === id);
+    });
+    if (this.#hudChapter) {
+      this.#hudChapter.textContent = TelemetryHudController.#CHAPTERS[id] || TelemetryHudController.#CHAPTERS.hero;
     }
   }
 
@@ -1136,25 +1262,6 @@ class TelemetryHudController {
       }
     }, { passive: true });
   }
-
-  #initLocalClock() {
-    if (!this.#clockEl) return;
-    const updateClock = () => {
-      try {
-        const formatted = new Intl.DateTimeFormat('en-US', {
-          timeZone: 'Asia/Manila',
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: true,
-        }).format(new Date());
-        this.#clockEl.textContent = `CABUYAO, PH · ${formatted} PHT`;
-      } catch {
-        this.#clockEl.textContent = 'CABUYAO, PH · ARCHIVE EDITION';
-      }
-    };
-    updateClock();
-    setInterval(updateClock, 30000);
-  }
 }
 
 
@@ -1167,8 +1274,3 @@ const cursorLoupe           = new CursorLoupeController();
 const lightboxController    = new LightboxController(transitionCoordinator, cursorLoupe);
 const galleryPresenter      = new GalleryPresenter(repository, transitionCoordinator, lightboxController, cursorLoupe);
 const telemetryHud          = new TelemetryHudController();
-
-// Global bindings preserved for declarative HTML attributes
-window.closeLightbox = () => lightboxController.close();
-window.lightboxNav   = dir => lightboxController.navigate(dir);
-window.switchTab     = cat => galleryPresenter.switchTab(cat);

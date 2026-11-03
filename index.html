@@ -28,14 +28,13 @@
   <link rel="alternate icon" href="favicon.ico">
 
   <!-- Critical Resource Preloading -->
-  <link rel="preload" href="fonts/Dreamer.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="eysi clicks (1).png" as="image">
 
   <!-- Typography Preconnect & Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&display=swap"
     rel="stylesheet"
   >
 
@@ -72,29 +71,14 @@
 
   <div class="grain" aria-hidden="true"></div>
 
-  <!-- Bespoke Optical Loupe Cursor (Desktop Fine Pointer Only) -->
-  <div class="cursor-loupe" id="cursor-loupe" aria-hidden="true">
-    <svg class="cursor-loupe-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-      <circle cx="11" cy="11" r="7"></circle>
-      <path d="M20 20l-4-4M11 8v6M8 11h6" stroke-linecap="round"></path>
-    </svg>
-    <span class="cursor-loupe-text" id="cursor-loupe-text">INSPECT PLATE</span>
-  </div>
-
   <nav id="navbar" aria-label="Primary">
     <a href="#hero" class="nav-logo" aria-label="EYSI CLICKS Home">
-      <img src="eysi clicks (1).png" alt="EYSI CLICKS" class="nav-logo-img">
+      <img src="eysi clicks (1).png" alt="EYSI CLICKS" class="nav-logo-img" width="800" height="800" decoding="async">
       <span class="nav-logo-meta" aria-hidden="true">
         <span class="nav-logo-studio">EYSI CLICKS</span>
         <span class="nav-logo-folio">ARCHIVE NO. 26</span>
       </span>
     </a>
-
-    <!-- Story & Memory Chapter Indicator -->
-    <div class="camera-hud memory-hud" aria-label="Current chapter">
-      <span class="hud-pill">EXHIBITION</span>
-      <span class="hud-item hud-chapter" id="hud-chapter">Fleeting Moments Held Forever</span>
-    </div>
 
     <div class="nav-actions">
       <ul class="nav-links">
@@ -117,22 +101,6 @@
     </div>
   </nav>
 
-
-  <!-- Time Continuum (Scroll Chronicle) -->
-  <aside class="focal-scale" aria-hidden="true">
-    <div class="focal-scale-track">
-      <div class="focal-scale-bar" id="focal-bar"></div>
-      <div class="focal-scale-cursor" id="focal-thumb"></div>
-    </div>
-    <div class="focal-scale-marks">
-      <span class="focal-val" data-scroll="0">Now</span>
-      <span class="focal-val" data-scroll="0.35">Passing</span>
-      <span class="focal-val" data-scroll="0.7">Preserved</span>
-      <span class="focal-val" data-scroll="1.0">Forever</span>
-    </div>
-    <div class="focal-scale-title">IN LIGHT &amp; TIME</div>
-  </aside>
-
   <!-- Luminous Shutter Flash Overlay on Lightbox Opening -->
   <div class="shutter-flash" id="shutter-flash" aria-hidden="true"></div>
 
@@ -144,93 +112,58 @@
     <div class="hero-glow" aria-hidden="true"></div>
 
     <!-- Subtle Archival Tilted Frames in Negative Spaces -->
-    <div class="hero-floating-frames" aria-label="Curated gallery highlights">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <img src="eysi clicks (1).png" alt="EYSI CLICKS logo" class="hero-logo" fetchpriority="high" decoding="async" width="800" height="800">
 
-      <figure class="hero-frame hero-frame-1" data-cat="predebut" data-orient="portrait" data-idx="0" role="button" tabindex="0" aria-label="View Avegail @18 in Lightbox">
-        <span class="hero-frame-index" aria-hidden="true">PLATE I</span>
-        <div class="hero-frame-mat">
-          <picture>
-            <source srcset="predebut/portrait/EYSI-2-22.webp" type="image/webp">
-            <img src="predebut/portrait/EYSI-2-22.jpg" alt="Avegail @18" loading="lazy" decoding="async">
-          </picture>
+        <p class="hero-eyebrow">Cherishing &amp; Immortalizing Moments</p>
+
+        <h1 class="hero-title">
+          <span class="hero-title-word eysi">EYSI</span>
+          <span class="hero-title-word clicks">CLICKS</span>
+        </h1>
+
+        <p class="hero-tagline">“We take photos as a return ticket to a moment otherwise gone.”</p>
+
+        <!-- Curatorial Memory Note -->
+        <div class="memory-motif" aria-hidden="true">
+          <span class="motif-sep">·</span>
+          <span class="motif-text">Still Standing in Light &nbsp;—&nbsp; Cabuyao, Laguna</span>
+          <span class="motif-sep">·</span>
         </div>
-        <figcaption class="hero-frame-caption">Avegail @18 &nbsp;·&nbsp; Pre-Debut</figcaption>
-      </figure>
 
-      <figure class="hero-frame hero-frame-2" data-cat="events" data-orient="landscape" data-idx="3" role="button" tabindex="0" aria-label="View Pulo Ati-Atihan in Lightbox">
-        <span class="hero-frame-index" aria-hidden="true">PLATE II</span>
-        <div class="hero-frame-mat">
-          <picture>
-            <source srcset="events/landscape/EYSI-3-16.webp" type="image/webp">
-            <img src="events/landscape/EYSI-3-16.jpg" alt="Pulo Ati-Atihan" loading="lazy" decoding="async">
-          </picture>
+        <div class="hero-divider"></div>
+
+        <p class="hero-sub">Youth &amp; Milestones &nbsp;·&nbsp; Celebrations &nbsp;·&nbsp; Enduring Legacies</p>
+
+        <div class="hero-cta-group">
+          <a href="#gallery" class="btn-editorial btn-editorial-primary">
+            <span>Enter Exhibition Archive</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </a>
+          <a href="#about" class="btn-editorial btn-editorial-ghost">The Philosophy</a>
         </div>
-        <figcaption class="hero-frame-caption">Pulo Ati-Atihan &nbsp;·&nbsp; Events</figcaption>
-      </figure>
+      </div>
 
-      <figure class="hero-frame hero-frame-3" data-cat="predebut" data-orient="landscape" data-idx="0" role="button" tabindex="0" aria-label="View Stilled Grace in Lightbox">
-        <span class="hero-frame-index" aria-hidden="true">PLATE III</span>
-        <div class="hero-frame-mat">
-          <picture>
-            <source srcset="predebut/landscape/EYSI-1-62.webp" type="image/webp">
-            <img src="predebut/landscape/EYSI-1-62.jpg" alt="Avegail @18" loading="lazy" decoding="async">
-          </picture>
-        </div>
-        <figcaption class="hero-frame-caption">Stilled Grace &nbsp;·&nbsp; Pre-Debut</figcaption>
-      </figure>
-
-      <figure class="hero-frame hero-frame-4" data-cat="institutional" data-orient="landscape" data-idx="4" role="button" tabindex="0" aria-label="View Foundation Week in Lightbox">
-        <span class="hero-frame-index" aria-hidden="true">PLATE IV</span>
-        <div class="hero-frame-mat">
-          <picture>
-            <source srcset="institutional/EYSI-109.webp" type="image/webp">
-            <img src="institutional/EYSI-109.jpg" alt="UC - PNC Foundation Week" loading="lazy" decoding="async">
-          </picture>
-        </div>
-        <figcaption class="hero-frame-caption">Foundation Week &nbsp;·&nbsp; Institutional</figcaption>
-      </figure>
-
-    </div>
-
-    <span class="viewfinder vf-tl" aria-hidden="true"><span class="vf-coord">35MM · f/1.4</span></span>
-    <span class="viewfinder vf-tr" aria-hidden="true"><span class="vf-coord">ISO 100 · RAW</span></span>
-    <span class="viewfinder vf-bl" aria-hidden="true"><span class="vf-coord">14°16'N 121°07'E</span></span>
-    <span class="viewfinder vf-br" aria-hidden="true"><span class="vf-coord">EDITION 2026</span></span>
-
-    <img src="eysi clicks (1).png" alt="EYSI CLICKS logo" class="hero-logo" fetchpriority="high" decoding="async">
-
-    <p class="hero-eyebrow">Cherishing &amp; Immortalizing Moments</p>
-
-    <h1 class="hero-title">
-      <span class="hero-title-line">
-        <span class="hero-title-word eysi">EYSI</span>
-      </span>
-      <span class="hero-title-line">
-        <span class="hero-title-word clicks">CLICKS</span>
-      </span>
-    </h1>
-
-    <p class="hero-tagline">“We take photos as a return ticket to a moment otherwise gone.”</p>
-
-    <!-- Poetic Memory Heartbeat Motif -->
-    <div class="memory-motif" aria-hidden="true">
-      <span class="motif-glyph">✦</span>
-      <span class="motif-text">Still Standing in Light &nbsp;·&nbsp; Cabuyao, Laguna</span>
-      <span class="motif-glyph">✦</span>
-    </div>
-
-    <div class="hero-divider"></div>
-
-    <p class="hero-sub">Youth &amp; Milestones &nbsp;·&nbsp; Celebrations &nbsp;·&nbsp; Enduring Legacies</p>
-
-    <div class="hero-cta-group">
-      <a href="#gallery" class="btn-editorial btn-editorial-primary">
-        <span>Enter Exhibition Archive</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-          <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
-      </a>
-      <a href="#about" class="btn-editorial btn-editorial-ghost">The Philosophy</a>
+      <div class="hero-showcase">
+        <figure class="hero-monument hero-frame" data-cat="predebut" data-orient="portrait" data-idx="0" role="button" tabindex="0" aria-label="View Avegail @18 in Lightbox">
+          <div class="hero-monument-mat">
+            <picture>
+              <source srcset="predebut/portrait/EYSI-2-22.webp" type="image/webp">
+              <img src="predebut/portrait/EYSI-2-22.jpg" alt="Avegail @18 · Pre-Debut Monograph" fetchpriority="high" decoding="async" width="800" height="1000">
+            </picture>
+            <figcaption class="hero-monument-caption">
+              <span class="monument-plate">PLATE 01</span>
+              <span class="monument-sep" aria-hidden="true">·</span>
+              <span class="monument-title">Avegail @ 18</span>
+              <span class="monument-sep" aria-hidden="true">·</span>
+              <span class="monument-context">Pre-Debut Monograph</span>
+            </figcaption>
+          </div>
+        </figure>
+      </div>
     </div>
 
     <div class="hero-scroll-hint" aria-hidden="true">
@@ -246,8 +179,6 @@
     <div class="about-wrap">
 
       <figure class="about-img">
-        <span class="frame-mark frame-mark-tl" aria-hidden="true"></span>
-        <span class="frame-mark frame-mark-br" aria-hidden="true"></span>
         <span class="about-plate-badge" aria-hidden="true">PLATE 00 · THE AUTEUR</span>
         <div class="about-img-inner">
           <picture>
@@ -271,22 +202,20 @@
           <em>Based in Cabuyao, Laguna, my calling is to give you a return ticket to the days that mattered most — transforming fleeting seconds into timeless heirlooms that you and your loved ones will cherish for a lifetime.</em>
         </blockquote>
 
-        <div class="about-ledger" aria-label="Archival milestones">
-          <div class="ledger-item">
-            <span class="ledger-num">03</span>
-            <span class="ledger-label">Curated Chapters</span>
-            <span class="ledger-sub">Debut · Events · Institutional</span>
+        <div class="about-monograph-narrative" aria-label="Curatorial statement">
+          <div class="monograph-principle">
+            <h3 class="principle-title">The Archival Medium</h3>
+            <p class="principle-body">
+              Every photograph is composed with reverence for natural light, delicate tonality, and unhurried human presence. Meticulously graded to transcend ephemeral digital filters, each plate is crafted to endure with the same warmth fifty years from today.
+            </p>
           </div>
-          <div class="ledger-item">
-            <span class="ledger-num" id="ledger-total-plates">28</span>
-            <span class="ledger-label">Archival Plates</span>
-            <span class="ledger-sub">Hand-Graded Color &amp; Light</span>
+          <div class="monograph-principle">
+            <h3 class="principle-title">The Curatorial Vision</h3>
+            <p class="principle-body">
+              From the quiet coming-of-age grace of an eighteenth debut to the shared spirit of celebratory milestones and institutional heritage, each commission is treated as an enduring fine-art publication—celebrating the profound beauty of living and remembering.
+            </p>
           </div>
-          <div class="ledger-item">
-            <span class="ledger-num">IV-A</span>
-            <span class="ledger-label">Cabuyao, Laguna</span>
-            <span class="ledger-sub">Available Across CALABARZON</span>
-          </div>
+          <span id="ledger-total-plates" class="sr-only">28</span>
         </div>
 
         <div class="about-signature">
@@ -387,11 +316,11 @@
 
       <!-- Photos for this category are added in app.js → photoData.institutional -->
       <div class="photo-grid" id="grid-institutional"></div>
-
     </div>
-
   </section>
 
+  <!-- Screen reader live announcement region for gallery state changes -->
+  <div id="gallery-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
   </main>
 
 
@@ -431,8 +360,8 @@
       </div>
 
       <div class="footer-telemetry">
-        <span class="ft-coords">14.2726° N, 121.1239° E</span>
-        <span class="ft-clock" id="ft-local-time">CABUYAO, PH · ARCHIVE EDITION</span>
+        <span class="ft-location">Cabuyao, Laguna · Region IV-A</span>
+        <span class="ft-service">Available for Private Commissions &amp; Editorial Works</span>
       </div>
     </div>
   </footer>
@@ -470,7 +399,7 @@
           <span>Zoom</span>
         </button>
 
-        <button type="button" class="lightbox-close" onclick="closeLightbox()" aria-label="Close">
+        <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Close">
           <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
             <path d="M4 4l10 10M14 4L4 14" stroke-linecap="round"></path>
           </svg>
@@ -478,7 +407,7 @@
       </div>
     </div>
 
-    <button type="button" class="lightbox-nav lightbox-prev" onclick="lightboxNav(-1)" aria-label="Previous photo">
+    <button type="button" class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous photo">
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
         <path d="M13 4L7 10l6 6" stroke-linecap="round" stroke-linejoin="round"></path>
       </svg>
@@ -486,7 +415,7 @@
 
     <div class="lightbox-stage">
       <div class="lightbox-frame-wrap" id="lightbox-frame-wrap">
-        <img class="lightbox-img" id="lightbox-img" src="EYSI-3-15.jpg" alt="Portfolio photo" title="Click to zoom / inspect detail">
+        <img class="lightbox-img" id="lightbox-img" src="EYSI-3-15.jpg" alt="Portfolio photo" title="Click to zoom / inspect detail" width="1600" height="1066" decoding="async">
         <div class="lightbox-slideshow-bar" id="lightbox-slideshow-bar" aria-hidden="true"></div>
       </div>
 
@@ -498,10 +427,14 @@
         <span class="lightbox-counter" id="lightbox-counter"></span>
       </div>
 
-      <div class="lightbox-filmstrip" id="lightbox-filmstrip" role="tablist" aria-label="Photo series thumbnails"></div>
+      <div class="lightbox-filmstrip" id="lightbox-filmstrip" role="tablist" aria-label="Photo series thumbnails">
+        <button type="button" class="filmstrip-thumb active" role="tab" aria-selected="true" aria-label="Photo 01">
+          <img src="EYSI-3-15.webp" alt="Plate 01 preview" width="64" height="48" decoding="async">
+        </button>
+      </div>
     </div>
 
-    <button type="button" class="lightbox-nav lightbox-next" onclick="lightboxNav(1)" aria-label="Next photo">
+    <button type="button" class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next photo">
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
         <path d="M7 4l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
       </svg>
