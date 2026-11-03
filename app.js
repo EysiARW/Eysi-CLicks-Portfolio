@@ -1,35 +1,20 @@
 /* ============================================================
    EYSI CLICKS — app.js
-   Single-page portfolio (Home / About / Gallery).
-   View-only. No upload logic.
+   Object-Oriented Luxury Portfolio Architecture
    Sections:
-     0. PHOTO DATA — add your photos here
-     1. Tab Switching (Gallery)
-     2. Lightbox
-     3. Init — builds photo grids + restores tab from URL
-     4. Nav Scroll Effect + Scrollspy (active link highlight)
+     0. PHOTO DATA — add or remove your photos here
+     1. Domain Model & Value Objects (PhotoAsset, PortfolioRepository)
+     2. ViewTransitionCoordinator (Same-Document View Transitions API)
+     3. ThemeManager (Archival Daylight / Darkroom Obsidian)
+     4. CursorLoupeController (Fine-Pointer Optical Reticle)
+     5. LightboxController (Darkroom Loupe, Museum Mat, Slideshow)
+     6. GalleryPresenter (Tabs, Orientation, Series Filter, Contact Sheet)
+     7. TelemetryHudController (Scrollspy, Focal Continuum, Local Clock)
+     8. Application Bootstrap
    ============================================================ */
 
 
-/* ── 0. PHOTO DATA — JUST PASTE THE FILE PATH IN ──
-   Each category has a portrait list and a landscape list. To add a
-   photo, paste its path/filename as a string — that's it, one line
-   per photo:
-
-     portrait: [
-       "photos/predebut/1.jpg",
-       "photos/predebut/2.jpg",
-     ],
-
-   - Order in the list = order shown on the page.
-   - Caption is generated automatically from the filename (dashes/
-     underscores become spaces, first letters capitalized) — so
-     "photos/predebut/mica-cake-cutting.jpg" becomes "Mica Cake Cutting".
-     Want a specific caption instead? Use an object:
-       { src: "photos/predebut/1.jpg", caption: "Golden Hour" }
-   - Remove a photo by deleting its line. No HTML editing needed —
-     the grids build themselves from these lists.
-*/
+/* ── 0. PHOTO DATA — JUST PASTE THE FILE PATH IN ── */
 
 const CATS = ['predebut', 'events', 'institutional'];
 
@@ -37,769 +22,1329 @@ const photoData = {
 
   predebut: {
     portrait: [
-       { src: "predebut/portrait/EYSI-2-22.jpg", caption: "Avegail @18" },
-       { src: "predebut/portrait/EYSI-5-5.jpg", caption: "Trisha @20" },
-       { src: "predebut/portrait/EYSI-6-3.jpg", caption: "Anne @20" },
-       { src: "predebut/portrait/EYSI-7-3.jpg", caption: "Anne @20" },
-       { src: "predebut/portrait/EYSI-8-3.jpg", caption: "Anne @20" }
-       
+      { src: "predebut/portrait/EYSI-2-22.jpg", caption: "Avegail @18" },
+      { src: "predebut/portrait/EYSI-5-5.jpg", caption: "Trisha @20" },
+      { src: "predebut/portrait/EYSI-6-3.jpg", caption: "Anne @20" },
+      { src: "predebut/portrait/EYSI-7-3.jpg", caption: "Anne @20" },
+      { src: "predebut/portrait/EYSI-8-3.jpg", caption: "Anne @20" }
     ],
     landscape: [
-        { src: "predebut/landscape/EYSI-1-62.jpg", caption: "Avegail @18" },
-        { src: "predebut/landscape/EYSI-3-16.jpg", caption: "Avegail @18" },
-        { src: "predebut/landscape/EYSI-4-9.jpg", caption: "Trisha @20" }
+      { src: "predebut/landscape/EYSI-1-62.jpg", caption: "Avegail @18" },
+      { src: "predebut/landscape/EYSI-3-16.jpg", caption: "Avegail @18" },
+      { src: "predebut/landscape/EYSI-4-9.jpg", caption: "Trisha @20" }
     ],
   },
 
   events: {
     portrait: [
-       { src: "events/portrait/EYSI-7-3.jpg", caption: "Eddie @75" },
-       { src: "events/portrait/EYSI-8-3.jpg", caption: "Eddie @75" },
+      { src: "events/portrait/EYSI-7-3.jpg", caption: "Eddie @75" },
+      { src: "events/portrait/EYSI-8-3.jpg", caption: "Eddie @75" }
     ],
     landscape: [
-       { src: "events/landscape/EYSI-1-62.jpg", caption: "Pulo Ati-Atihan" },
-       { src: "events/landscape/EYSI-1.jpg", caption: "Khel Pangilinan" },
-       { src: "events/landscape/EYSI-2-22.jpg", caption: "Pulo Ati-Atihan" },
-       { src: "events/landscape/EYSI-3-16.jpg", caption: "Pulo Ati-Atihan" },
-       { src: "events/landscape/EYSI-4-9.jpg", caption: "Pulo Ati-Atihan" },
-       { src: "events/landscape/EYSI-5-5.jpg", caption: "Eddie @75" },
-       { src: "events/landscape/EYSI-5.jpg", caption: "Khel Pangilinan" },
-       { src: "events/landscape/EYSI-6-3.jpg", caption: "Eddie @75" },
-       { src: "events/landscape/EYSI-9.jpg", caption: "Khel Pangilinan" },
-       { src: "events/landscape/EYSI-12.jpg", caption: "Khel Pangilinan" }
+      { src: "events/landscape/EYSI-1-62.jpg", caption: "Pulo Ati-Atihan" },
+      { src: "events/landscape/EYSI-1.jpg", caption: "Khel Pangilinan" },
+      { src: "events/landscape/EYSI-2-22.jpg", caption: "Pulo Ati-Atihan" },
+      { src: "events/landscape/EYSI-3-16.jpg", caption: "Pulo Ati-Atihan" },
+      { src: "events/landscape/EYSI-4-9.jpg", caption: "Pulo Ati-Atihan" },
+      { src: "events/landscape/EYSI-5-5.jpg", caption: "Eddie @75" },
+      { src: "events/landscape/EYSI-5.jpg", caption: "Khel Pangilinan" },
+      { src: "events/landscape/EYSI-6-3.jpg", caption: "Eddie @75" },
+      { src: "events/landscape/EYSI-9.jpg", caption: "Khel Pangilinan" },
+      { src: "events/landscape/EYSI-12.jpg", caption: "Khel Pangilinan" }
     ],
   },
 
   institutional: {
     landscape: [
       { src: "institutional/EYSI-32.jpg", caption: "Baccalaureate Mass" },
-       { src: "institutional/EYSI-37.jpg", caption: "Baccalaureate Mass" },
-       { src: "institutional/EYSI-41.jpg", caption: "Baccalaureate Mass" },
-       { src: "institutional/EYSI-55.jpg", caption: "Baccalaureate Mass" },
-       { src: "institutional/EYSI-109.jpg", caption: "UC - PNC Foundation Week 2026" },
-       { src: "institutional/EYSI-145.jpg", caption: "UC - PNC Foundation Week 2026" },
-       { src: "institutional/EYSI-152.jpg", caption: "UC - PNC Foundation Week 2026" },
-       { src: "institutional/EYSI-189.jpg", caption: "UC - PNC Foundation Week 2026" }
+      { src: "institutional/EYSI-37.jpg", caption: "Baccalaureate Mass" },
+      { src: "institutional/EYSI-41.jpg", caption: "Baccalaureate Mass" },
+      { src: "institutional/EYSI-55.jpg", caption: "Baccalaureate Mass" },
+      { src: "institutional/EYSI-109.jpg", caption: "UC - PNC Foundation Week 2026" },
+      { src: "institutional/EYSI-145.jpg", caption: "UC - PNC Foundation Week 2026" },
+      { src: "institutional/EYSI-152.jpg", caption: "UC - PNC Foundation Week 2026" },
+      { src: "institutional/EYSI-189.jpg", caption: "UC - PNC Foundation Week 2026" }
     ],
   },
 
 };
 
-// Each category remembers its own orientation instead of sharing one
-// global toggle. Pre-Debut opens in Portrait; Events and Institutional
-// open in Landscape. Switching the toggle only changes whichever
-// category tab you're currently looking at.
-const defaultOrientation = {
-  predebut:      'portrait',
-  events:        'landscape',
-  institutional: 'landscape',
-};
-let categoryOrientation = { ...defaultOrientation };
 
-// Turns a plain string entry into {src, caption}; leaves object
-// entries (custom captions) as-is.
-function normalizePhoto(entry) {
-  if (typeof entry !== 'string') return entry;
-  const filename = entry.split('/').pop().split('.')[0];
-  const caption = filename
-    .replace(/[-_]+/g, ' ')
-    .replace(/\b\w/g, c => c.toUpperCase());
-  return { src: entry, caption };
-}
+/* ── 1. DOMAIN MODEL & REPOSITORY ── */
 
+class PhotoAsset {
+  #src;
+  #webpSrc;
+  #caption;
+  #category;
+  #orientation;
+  #index;
 
-/* ── 1. TAB SWITCHING (Gallery) ── */
+  static #OPTICAL_PROFILES = {
+    predebut:      '85MM PRIME · f/1.4 · ISO 100 · NATURAL LIGHT',
+    events:        '35MM REPORTAGE · f/1.8 · ISO 400 · AMBIENT',
+    institutional: '24-70MM ARCHIVAL · f/2.8 · ISO 200 · DOCUMENTARY',
+  };
 
-function switchTab(cat) {
-  if (!CATS.includes(cat)) return;
+  constructor(entry, category, orientation, index) {
+    const normalized = PhotoAsset.#normalizeEntry(entry);
+    this.#src         = normalized.src;
+    this.#webpSrc     = normalized.src.replace(/\.jpe?g$/i, '.webp');
+    this.#caption     = normalized.caption;
+    this.#category    = category;
+    this.#orientation = orientation;
+    this.#index       = index;
+  }
 
-  document.querySelectorAll('.cat-tab').forEach(tab => {
-    const isActive = tab.dataset.tab === cat;
-    tab.classList.toggle('active', isActive);
-    tab.setAttribute('aria-selected', isActive);
-    tab.tabIndex = isActive ? 0 : -1;
-  });
-
-  document.querySelectorAll('.cat-panel').forEach(panel => {
-    panel.classList.remove('active');
-  });
-
-  const panel = document.getElementById('panel-' + cat);
-  if (panel) panel.classList.add('active');
-
-  // Build this tab's grid (in its own remembered orientation) the
-  // first time it's actually opened, and sync the Portrait/Landscape
-  // toggle to reflect that category's current mode.
-  ensureRendered(cat);
-  updateOrientToggleUI(cat);
-
-  // Rebalance grid once the active panel is visible in layout
-  requestAnimationFrame(() => {
-    balanceGrid('grid-' + cat);
-  });
-
-  // Keep the URL shareable/refreshable without a full page reload.
-  const url = new URL(window.location);
-  url.searchParams.set('tab', cat);
-  history.replaceState(null, '', url);
-}
-
-document.querySelectorAll('.cat-tab[data-tab]').forEach(tab => {
-  tab.addEventListener('click', () => switchTab(tab.dataset.tab));
-});
-
-// Arrow-key navigation between tabs, per the standard ARIA tablist pattern.
-const tabListEl = document.querySelector('.cat-tabs');
-if (tabListEl) {
-  tabListEl.addEventListener('keydown', e => {
-    const tabs = Array.from(tabListEl.querySelectorAll('.cat-tab'));
-    const currentIndex = tabs.indexOf(document.activeElement);
-    if (currentIndex === -1) return;
-
-    let newIndex = null;
-    if (e.key === 'ArrowRight') newIndex = (currentIndex + 1) % tabs.length;
-    if (e.key === 'ArrowLeft')  newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-    if (e.key === 'Home')       newIndex = 0;
-    if (e.key === 'End')        newIndex = tabs.length - 1;
-
-    if (newIndex !== null) {
-      e.preventDefault();
-      tabs[newIndex].focus();
-      switchTab(tabs[newIndex].dataset.tab);
+  static #normalizeEntry(entry) {
+    if (typeof entry !== 'string') {
+      return { src: entry.src, caption: entry.caption || 'Untitled Moment' };
     }
-  });
+    const filename = entry.split('/').pop().split('.')[0];
+    const caption = filename
+      .replace(/[-_]+/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+    return { src: entry, caption };
+  }
+
+  get src()         { return this.#src; }
+  get webpSrc()     { return this.#webpSrc; }
+  get caption()     { return this.#caption; }
+  get category()    { return this.#category; }
+  get orientation() { return this.#orientation; }
+  get index()       { return this.#index; }
+
+  get plateNumber() {
+    return `PLATE ${String(this.#index + 1).padStart(2, '0')}`;
+  }
+
+  get momentTag() {
+    return `PLATE ${String(this.#index + 1).padStart(2, '0')}`;
+  }
+
+  get categoryLabel() {
+    const labels = {
+      predebut:      'PRE-DEBUT MONOGRAPH',
+      events:        'EVENTS CHRONICLE',
+      institutional: 'INSTITUTIONAL ARCHIVE',
+    };
+    return labels[this.#category] || 'ARCHIVE PLATE';
+  }
+
+  get opticalTelemetry() {
+    return PhotoAsset.#OPTICAL_PROFILES[this.#category] || '35MM FULL-FRAME · NATURAL LIGHT';
+  }
 }
 
 
-/* ── 2. LIGHTBOX ── */
+class PortfolioRepository {
+  #rawStore;
+  #categories;
 
-let lightboxImages = [];  // [{ src, caption }]
-let lightboxIdx    = 0;
+  constructor(rawStore, categories = CATS) {
+    this.#rawStore   = rawStore;
+    this.#categories = [...categories];
+  }
 
-function triggerShutterFlash() {
-  const flash = document.getElementById('shutter-flash');
-  if (!flash) return;
-  flash.classList.add('flash-active');
-  requestAnimationFrame(() => {
-    setTimeout(() => {
-      flash.classList.remove('flash-active');
-    }, 140);
-  });
-}
+  getCategories() {
+    return [...this.#categories];
+  }
 
-let lastFocusedElement = null;
-let isLightboxZoomed = false;
+  isValidCategory(cat) {
+    return this.#categories.includes(cat);
+  }
 
-function toggleLightboxZoom() {
-  const img = document.getElementById('lightbox-img');
-  if (!img) return;
-  isLightboxZoomed = !isLightboxZoomed;
-  img.classList.toggle('zoomed', isLightboxZoomed);
-}
+  hasOrientation(cat, orientation) {
+    const list = this.#rawStore[cat]?.[orientation];
+    return Array.isArray(list) && list.length > 0;
+  }
 
-function resetLightboxZoom() {
-  isLightboxZoomed = false;
-  const img = document.getElementById('lightbox-img');
-  if (img) img.classList.remove('zoomed');
-}
+  getOrientationCount(cat, orientation) {
+    const list = this.#rawStore[cat]?.[orientation];
+    return Array.isArray(list) ? list.length : 0;
+  }
 
-function renderFilmstrip() {
-  const strip = document.getElementById('lightbox-filmstrip');
-  if (!strip) return;
-  strip.innerHTML = '';
+  getCategoryTotalCount(cat) {
+    return this.getOrientationCount(cat, 'portrait') + this.getOrientationCount(cat, 'landscape');
+  }
 
-  lightboxImages.forEach((image, idx) => {
-    const thumb = document.createElement('button');
-    thumb.type = 'button';
-    thumb.className = 'filmstrip-thumb' + (idx === lightboxIdx ? ' active' : '');
-    thumb.setAttribute('aria-label', `View photo ${idx + 1}: ${image.caption || 'Untitled'}`);
+  getTotalArchivalPlates() {
+    return this.#categories.reduce((sum, cat) => sum + this.getCategoryTotalCount(cat), 0);
+  }
 
-    const img = document.createElement('img');
-    const webpSrc = image.src.replace(/\.jpe?g$/i, '.webp');
-    img.src = webpSrc;
-    img.alt = image.caption || '';
-    img.loading = 'lazy';
-    img.decoding = 'async';
-    img.onerror = () => { img.src = image.src; };
+  getPhotos(cat, orientation, seriesFilter = 'ALL') {
+    const rawList = this.#rawStore[cat]?.[orientation] || [];
+    const assets = rawList.map((entry, idx) => new PhotoAsset(entry, cat, orientation, idx));
+    if (!seriesFilter || seriesFilter === 'ALL') return assets;
+    return assets.filter(asset => asset.caption === seriesFilter);
+  }
 
-    thumb.appendChild(img);
-    thumb.addEventListener('click', e => {
-      e.stopPropagation();
-      if (lightboxIdx !== idx) {
-        lightboxIdx = idx;
-        updateLightbox();
-      }
+  getSeriesGroups(cat, orientation) {
+    const assets = this.getPhotos(cat, orientation, 'ALL');
+    const counts = new Map();
+    assets.forEach(asset => {
+      counts.set(asset.caption, (counts.get(asset.caption) || 0) + 1);
     });
-
-    strip.appendChild(thumb);
-  });
-}
-
-function syncFilmstripActive() {
-  const strip = document.getElementById('lightbox-filmstrip');
-  if (!strip) return;
-  const thumbs = strip.querySelectorAll('.filmstrip-thumb');
-  thumbs.forEach((thumb, idx) => {
-    const isActive = idx === lightboxIdx;
-    thumb.classList.toggle('active', isActive);
-    if (isActive) {
-      thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
-  });
-}
-
-function openLightbox(images, idx) {
-  if (!images || !images.length) return;
-  const lightbox = document.getElementById('lightbox');
-  if (!lightbox) return;
-  lastFocusedElement = document.activeElement;
-  triggerShutterFlash();
-  lightboxImages = images;
-  lightboxIdx    = Math.max(0, Math.min(idx, images.length - 1));
-  renderFilmstrip();
-  updateLightbox();
-  lightbox.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  const closeBtn = lightbox.querySelector('.lightbox-close');
-  if (closeBtn) closeBtn.focus();
-}
-
-function updateLightbox() {
-  if (!lightboxImages.length) return;
-  resetLightboxZoom();
-  const { src, caption } = lightboxImages[lightboxIdx];
-  const img  = document.getElementById('lightbox-img');
-  if (img) { 
-    img.src = src; 
-    img.alt = caption || 'Portfolio photo'; 
-  }
-
-  const titleEl = document.getElementById('lightbox-title');
-  if (titleEl) titleEl.textContent = caption || 'Cherished Moment';
-
-  const counterEl = document.getElementById('lightbox-counter');
-  if (counterEl) counterEl.textContent = `${String(lightboxIdx + 1).padStart(2, '0')} / ${String(lightboxImages.length).padStart(2, '0')}`;
-
-  syncFilmstripActive();
-
-  // Preload neighboring photos for instant transition
-  if (lightboxImages.length > 1) {
-    const nextIdx = (lightboxIdx + 1) % lightboxImages.length;
-    const prevIdx = (lightboxIdx - 1 + lightboxImages.length) % lightboxImages.length;
-    const pNext = new Image();
-    pNext.src = lightboxImages[nextIdx].src;
-    const pPrev = new Image();
-    pPrev.src = lightboxImages[prevIdx].src;
+    return Array.from(counts.entries()).map(([name, count]) => ({ name, count }));
   }
 }
 
-function closeLightbox() {
-  const lightbox = document.getElementById('lightbox');
-  if (!lightbox) return;
-  resetLightboxZoom();
-  lightbox.classList.remove('open');
-  document.body.style.overflow = '';
-  if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
-    lastFocusedElement.focus();
-  }
-}
 
-function lightboxNav(dir) {
-  if (!lightboxImages.length) return;
-  resetLightboxZoom();
-  lightboxIdx = (lightboxIdx + dir + lightboxImages.length) % lightboxImages.length;
-  updateLightbox();
-}
+/* ── 2. VIEW TRANSITION COORDINATOR ── */
 
-// Backdrop click, Touch Swipe, and Image Zoom toggle
-const lightboxEl = document.getElementById('lightbox');
-if (lightboxEl) {
-  lightboxEl.addEventListener('click', function (e) {
-    if (e.target === this || e.target.classList.contains('lightbox-stage')) {
-      closeLightbox();
-    }
-  });
+class ViewTransitionCoordinator {
+  #reducedMotionQuery;
 
-  const lbImg = document.getElementById('lightbox-img');
-  if (lbImg) {
-    lbImg.addEventListener('click', e => {
-      e.stopPropagation();
-      toggleLightboxZoom();
-    });
+  constructor() {
+    this.#reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   }
 
-  // Mobile Touch Gestures
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let touchEndX   = 0;
-  let touchEndY   = 0;
-  let isMultiTouch = false;
+  get prefersReducedMotion() {
+    return this.#reducedMotionQuery.matches;
+  }
 
-  lightboxEl.addEventListener('touchstart', e => {
-    if (e.touches.length > 1) {
-      isMultiTouch = true;
+  run(mutationCallback, afterCallback = null) {
+    if (!document.startViewTransition || this.prefersReducedMotion) {
+      mutationCallback();
+      if (typeof afterCallback === 'function') afterCallback();
       return;
     }
-    isMultiTouch = false;
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-    touchEndX   = touchStartX;
-    touchEndY   = touchStartY;
-  }, { passive: true });
 
-  lightboxEl.addEventListener('touchmove', e => {
-    if (e.touches.length > 1) isMultiTouch = true;
-    if (e.touches.length === 1) {
-      touchEndX = e.touches[0].clientX;
-      touchEndY = e.touches[0].clientY;
-    }
-  }, { passive: true });
-
-  lightboxEl.addEventListener('touchend', () => {
-    if (isMultiTouch) return;
-    const deltaX = touchEndX - touchStartX;
-    const deltaY = touchEndY - touchStartY;
-    const absX   = Math.abs(deltaX);
-    const absY   = Math.abs(deltaY);
-
-    // Horizontal swipe: threshold 45px, clearly horizontal direction
-    if (absX > 45 && absX > absY * 1.2) {
-      if (deltaX < 0) {
-        lightboxNav(1);  // Swipe left -> Next photo
-      } else {
-        lightboxNav(-1); // Swipe right -> Previous photo
+    try {
+      const transition = document.startViewTransition(() => {
+        mutationCallback();
+      });
+      if (typeof afterCallback === 'function') {
+        transition.finished.finally(() => {
+          afterCallback();
+        });
       }
-    } else if (deltaY > 80 && absX < 60) {
-      // Downward swipe -> Dismiss lightbox
-      closeLightbox();
+    } catch {
+      mutationCallback();
+      if (typeof afterCallback === 'function') afterCallback();
     }
-  }, { passive: true });
+  }
 }
 
-// Keyboard navigation & Modal Focus Trap
-document.addEventListener('keydown', e => {
-  const lb = document.getElementById('lightbox');
-  if (!lb || !lb.classList.contains('open')) return;
 
-  if (e.key === 'Escape') {
-    e.preventDefault();
-    if (isLightboxZoomed) {
-      resetLightboxZoom();
+/* ── 3. THEME MANAGER (DAYLIGHT / DARKROOM) ── */
+
+class ThemeManager {
+  #storageKey = 'eysiclicks-theme';
+  #toggleBtn;
+  #toggleLabel;
+  #metaThemeColor;
+  #transitionCoordinator;
+
+  constructor(transitionCoordinator) {
+    this.#transitionCoordinator = transitionCoordinator;
+    this.#toggleBtn      = document.getElementById('theme-toggle');
+    this.#toggleLabel    = document.getElementById('theme-toggle-label');
+    this.#metaThemeColor = document.getElementById('meta-theme-color');
+    this.#init();
+  }
+
+  #init() {
+    const saved = localStorage.getItem(this.#storageKey);
+    const initial = saved === 'dark' ? 'dark' : 'light';
+    this.#applyTheme(initial, false);
+
+    if (this.#toggleBtn) {
+      this.#toggleBtn.addEventListener('click', () => {
+        const next = this.currentTheme === 'dark' ? 'light' : 'dark';
+        this.#transitionCoordinator.run(() => {
+          this.#applyTheme(next, true);
+        });
+      });
+    }
+  }
+
+  get currentTheme() {
+    return document.documentElement.getAttribute('data-theme') || 'light';
+  }
+
+  #applyTheme(theme, persist) {
+    document.documentElement.setAttribute('data-theme', theme);
+    if (persist) {
+      try { localStorage.setItem(this.#storageKey, theme); } catch {}
+    }
+
+    const isDark = theme === 'dark';
+    if (this.#toggleLabel) {
+      this.#toggleLabel.textContent = isDark ? 'Daylight' : 'Darkroom';
+    }
+    if (this.#toggleBtn) {
+      this.#toggleBtn.setAttribute(
+        'aria-label',
+        isDark ? 'Switch to Archival Daylight Mode' : 'Switch to Darkroom Mode'
+      );
+    }
+    if (this.#metaThemeColor) {
+      this.#metaThemeColor.setAttribute('content', isDark ? '#0a0a0b' : '#faf8f5');
+    }
+  }
+}
+
+
+/* ── 4. BESPOKE OPTICAL LOUPE CURSOR CONTROLLER ── */
+
+class CursorLoupeController {
+  #el;
+  #textEl;
+  #finePointerQuery;
+  #targetX = -100;
+  #targetY = -100;
+  #rafId = null;
+
+  constructor() {
+    this.#el     = document.getElementById('cursor-loupe');
+    this.#textEl = document.getElementById('cursor-loupe-text');
+    this.#finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+    if (this.#el && this.#finePointerQuery.matches) {
+      this.#bindGlobalTracking();
+    }
+  }
+
+  #bindGlobalTracking() {
+    window.addEventListener('mousemove', e => {
+      this.#targetX = e.clientX;
+      this.#targetY = e.clientY;
+      if (!this.#rafId) {
+        this.#rafId = requestAnimationFrame(() => {
+          if (this.#el) {
+            this.#el.style.transform = `translate3d(${this.#targetX + 16}px, ${this.#targetY + 16}px, 0) scale(1)`;
+          }
+          this.#rafId = null;
+        });
+      }
+    }, { passive: true });
+  }
+
+  attachInteractiveTarget(element, label = 'INSPECT PLATE') {
+    if (!this.#el || !this.#finePointerQuery.matches || !element) return;
+    element.addEventListener('mouseenter', () => {
+      if (this.#textEl) this.#textEl.textContent = label;
+      this.#el.classList.add('active');
+    });
+    element.addEventListener('mouseleave', () => {
+      this.#el.classList.remove('active');
+    });
+  }
+
+  hide() {
+    if (this.#el) this.#el.classList.remove('active');
+  }
+}
+
+
+/* ── 5. LIGHTBOX CONTROLLER ("THE DARKROOM LOUPE") ── */
+
+class LightboxController {
+  #lightboxEl;
+  #frameWrapEl;
+  #imgEl;
+  #titleEl;
+  #plateNoEl;
+  #counterEl;
+  #catBadgeEl;
+  #exifEl;
+  #filmstripEl;
+  #slideshowBarEl;
+  #matBtn;
+  #playBtn;
+  #playLabel;
+  #zoomBtn;
+  #shutterFlashEl;
+  #transitionCoordinator;
+  #cursorLoupe;
+
+  #images = [];
+  #currentIndex = 0;
+  #isZoomed = false;
+  #hasMat = false;
+  #slideshowInterval = null;
+  #lastFocusedElement = null;
+  #activeSourceFigure = null;
+
+  constructor(transitionCoordinator, cursorLoupe) {
+    this.#transitionCoordinator = transitionCoordinator;
+    this.#cursorLoupe    = cursorLoupe;
+    this.#lightboxEl     = document.getElementById('lightbox');
+    this.#frameWrapEl    = document.getElementById('lightbox-frame-wrap');
+    this.#imgEl          = document.getElementById('lightbox-img');
+    this.#titleEl        = document.getElementById('lightbox-title');
+    this.#plateNoEl      = document.getElementById('lightbox-plate-no');
+    this.#counterEl      = document.getElementById('lightbox-counter');
+    this.#catBadgeEl     = document.getElementById('lightbox-cat-badge');
+    this.#exifEl         = document.getElementById('lightbox-exif');
+    this.#filmstripEl    = document.getElementById('lightbox-filmstrip');
+    this.#slideshowBarEl = document.getElementById('lightbox-slideshow-bar');
+    this.#matBtn         = document.getElementById('lb-mat-btn');
+    this.#playBtn        = document.getElementById('lb-play-btn');
+    this.#playLabel      = document.getElementById('lb-play-label');
+    this.#zoomBtn        = document.getElementById('lb-zoom-btn');
+    this.#shutterFlashEl = document.getElementById('shutter-flash');
+
+    this.#bindEvents();
+  }
+
+  get isOpen() {
+    return Boolean(this.#lightboxEl && this.#lightboxEl.classList.contains('open'));
+  }
+
+  open(images, index, sourceFigure = null) {
+    if (!images || !images.length || !this.#lightboxEl) return;
+    this.#cursorLoupe?.hide();
+    this.#lastFocusedElement = document.activeElement;
+    this.#images = images;
+    this.#currentIndex = Math.max(0, Math.min(index, images.length - 1));
+
+    this.#clearSourceTransitionClass();
+    if (sourceFigure) {
+      this.#activeSourceFigure = sourceFigure;
+      sourceFigure.classList.add('vt-source');
+    }
+
+    this.#triggerShutterFlash();
+    this.#renderFilmstrip();
+    this.#updateView();
+
+    this.#transitionCoordinator.run(
+      () => {
+        if (sourceFigure) sourceFigure.classList.remove('vt-source');
+        this.#lightboxEl.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      },
+      () => {
+        const closeBtn = this.#lightboxEl.querySelector('.lightbox-close');
+        if (closeBtn) closeBtn.focus();
+      }
+    );
+  }
+
+  close() {
+    if (!this.#lightboxEl || !this.isOpen) return;
+    this.stopSlideshow();
+    this.#resetZoom();
+
+    const restoreTarget = this.#lastFocusedElement;
+    const sourceFigure = this.#activeSourceFigure;
+
+    this.#transitionCoordinator.run(
+      () => {
+        this.#lightboxEl.classList.remove('open');
+        document.body.style.overflow = '';
+        if (sourceFigure) sourceFigure.classList.add('vt-source');
+      },
+      () => {
+        this.#clearSourceTransitionClass();
+        if (restoreTarget && typeof restoreTarget.focus === 'function') {
+          restoreTarget.focus();
+        }
+      }
+    );
+  }
+
+  navigate(dir) {
+    if (!this.#images.length) return;
+    this.#resetZoom();
+    this.#currentIndex = (this.#currentIndex + dir + this.#images.length) % this.#images.length;
+    this.#updateView();
+  }
+
+  toggleZoom() {
+    if (!this.#imgEl) return;
+    this.#isZoomed = !this.#isZoomed;
+    this.#imgEl.classList.toggle('zoomed', this.#isZoomed);
+    if (this.#zoomBtn) {
+      this.#zoomBtn.setAttribute('aria-pressed', String(this.#isZoomed));
+    }
+  }
+
+  toggleMuseumMat() {
+    if (!this.#frameWrapEl) return;
+    this.#hasMat = !this.#hasMat;
+    this.#frameWrapEl.classList.toggle('has-mat', this.#hasMat);
+    if (this.#matBtn) {
+      this.#matBtn.setAttribute('aria-pressed', String(this.#hasMat));
+    }
+  }
+
+  toggleSlideshow() {
+    if (this.#slideshowInterval) {
+      this.stopSlideshow();
     } else {
-      closeLightbox();
-    }
-    return;
-  }
-  if (e.key === 'ArrowLeft') {
-    e.preventDefault();
-    lightboxNav(-1);
-    return;
-  }
-  if (e.key === 'ArrowRight') {
-    e.preventDefault();
-    lightboxNav(1);
-    return;
-  }
-  if (e.key === 'Tab') {
-    const focusable = Array.from(lb.querySelectorAll('button:not([disabled])'));
-    if (!focusable.length) return;
-    const first = focusable[0];
-    const last  = focusable[focusable.length - 1];
-
-    if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault();
-      first.focus();
+      this.startSlideshow();
     }
   }
-});
 
+  startSlideshow() {
+    if (this.#slideshowInterval || this.#images.length <= 1) return;
+    if (this.#playBtn) this.#playBtn.setAttribute('aria-pressed', 'true');
+    if (this.#playLabel) this.#playLabel.textContent = 'Pause';
+    if (this.#slideshowBarEl) this.#slideshowBarEl.classList.add('playing');
 
-/* ── 3. INIT — builds photo grids + restores tab from URL ── */
-/*
-   Reads the photoData object above and generates the <figure>
-   markup for each grid automatically. You never need to touch
-   the HTML — just edit the arrays in section 0.
-*/
-
-function buildGrid(gridId, rawImages) {
-  const grid = document.getElementById(gridId);
-  if (!grid) return;
-
-  grid.innerHTML = '';
-
-  if (!rawImages || !rawImages.length) {
-    const empty = document.createElement('div');
-    empty.className = 'empty-state';
-    empty.innerHTML = `
-      <p class="empty-state-title">Series Curated in Alternate Format</p>
-      <p class="empty-state-sub">Switch orientation above to explore this collection.</p>
-    `;
-    grid.appendChild(empty);
-    return;
+    this.#slideshowInterval = window.setInterval(() => {
+      this.navigate(1);
+    }, 3500);
   }
 
-  const images = rawImages.map(normalizePhoto);
+  stopSlideshow() {
+    if (this.#slideshowInterval) {
+      clearInterval(this.#slideshowInterval);
+      this.#slideshowInterval = null;
+    }
+    if (this.#playBtn) this.#playBtn.setAttribute('aria-pressed', 'false');
+    if (this.#playLabel) this.#playLabel.textContent = 'Slideshow';
+    if (this.#slideshowBarEl) this.#slideshowBarEl.classList.remove('playing');
+  }
 
-  images.forEach((image, idx) => {
-    const figure = document.createElement('figure');
-    figure.className = 'photo-item';
+  #resetZoom() {
+    this.#isZoomed = false;
+    if (this.#imgEl) this.#imgEl.classList.remove('zoomed');
+    if (this.#zoomBtn) this.#zoomBtn.setAttribute('aria-pressed', 'false');
+  }
 
-    // 4 Viewfinder focus corners
-    ['tl', 'tr', 'bl', 'br'].forEach(pos => {
-      const corner = document.createElement('span');
-      corner.className = `vf-c vf-c-${pos}`;
-      corner.setAttribute('aria-hidden', 'true');
-      figure.appendChild(corner);
+  #clearSourceTransitionClass() {
+    document.querySelectorAll('.photo-item.vt-source').forEach(el => el.classList.remove('vt-source'));
+    this.#activeSourceFigure = null;
+  }
+
+  #triggerShutterFlash() {
+    if (!this.#shutterFlashEl || this.#transitionCoordinator.prefersReducedMotion) return;
+    this.#shutterFlashEl.classList.add('flash-active');
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        this.#shutterFlashEl.classList.remove('flash-active');
+      }, 130);
+    });
+  }
+
+  #updateView() {
+    if (!this.#images.length) return;
+    const current = this.#images[this.#currentIndex];
+
+    if (this.#imgEl) {
+      this.#imgEl.src = current.src;
+      this.#imgEl.alt = current.caption || 'Portfolio photo';
+    }
+    if (this.#titleEl) {
+      this.#titleEl.textContent = current.caption || 'Cherished Moment';
+    }
+    if (this.#plateNoEl) {
+      this.#plateNoEl.textContent = current.plateNumber || `PLATE ${String(this.#currentIndex + 1).padStart(2, '0')}`;
+    }
+    if (this.#counterEl) {
+      this.#counterEl.textContent = `${String(this.#currentIndex + 1).padStart(2, '0')} / ${String(this.#images.length).padStart(2, '0')}`;
+    }
+    if (this.#catBadgeEl && current.categoryLabel) {
+      this.#catBadgeEl.textContent = current.categoryLabel;
+    }
+    if (this.#exifEl && current.opticalTelemetry) {
+      this.#exifEl.textContent = current.opticalTelemetry;
+    }
+
+    this.#syncFilmstripActive();
+
+    // Preload adjacent frames for zero-latency browsing
+    if (this.#images.length > 1) {
+      const nextIdx = (this.#currentIndex + 1) % this.#images.length;
+      const prevIdx = (this.#currentIndex - 1 + this.#images.length) % this.#images.length;
+      new Image().src = this.#images[nextIdx].src;
+      new Image().src = this.#images[prevIdx].src;
+    }
+  }
+
+  #renderFilmstrip() {
+    if (!this.#filmstripEl) return;
+    this.#filmstripEl.innerHTML = '';
+
+    this.#images.forEach((image, idx) => {
+      const thumb = document.createElement('button');
+      thumb.type = 'button';
+      thumb.className = 'filmstrip-thumb' + (idx === this.#currentIndex ? ' active' : '');
+      thumb.setAttribute('aria-label', `View photo ${idx + 1}: ${image.caption || 'Untitled'}`);
+
+      const img = document.createElement('img');
+      img.src = image.webpSrc || image.src.replace(/\.jpe?g$/i, '.webp');
+      img.alt = image.caption || '';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.onerror = () => { img.src = image.src; };
+
+      thumb.appendChild(img);
+      thumb.addEventListener('click', e => {
+        e.stopPropagation();
+        if (this.#currentIndex !== idx) {
+          this.#resetZoom();
+          this.#currentIndex = idx;
+          this.#updateView();
+        }
+      });
+
+      this.#filmstripEl.appendChild(thumb);
+    });
+  }
+
+  #syncFilmstripActive() {
+    if (!this.#filmstripEl) return;
+    const thumbs = this.#filmstripEl.querySelectorAll('.filmstrip-thumb');
+    thumbs.forEach((thumb, idx) => {
+      const isActive = idx === this.#currentIndex;
+      thumb.classList.toggle('active', isActive);
+      if (isActive) {
+        thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    });
+  }
+
+  #bindEvents() {
+    if (!this.#lightboxEl) return;
+
+    this.#lightboxEl.addEventListener('click', e => {
+      if (e.target === this.#lightboxEl || e.target.classList.contains('lightbox-stage')) {
+        this.close();
+      }
     });
 
-    // Cherished Moment index badge (e.g. MOMENT 01)
-    const tag = document.createElement('span');
-    tag.className = 'photo-tag';
-    tag.textContent = `MOMENT ${String(idx + 1).padStart(2, '0')}`;
-    figure.appendChild(tag);
-
-    const picture = document.createElement('picture');
-    const sourceWebp = document.createElement('source');
-    sourceWebp.srcset = image.src.replace(/\.jpe?g$/i, '.webp');
-    sourceWebp.type = 'image/webp';
-
-    const img = document.createElement('img');
-    img.src = image.src;
-    img.alt = image.caption || '';
-    img.loading = 'lazy';     // don't fetch until near viewport
-    img.decoding = 'async';   // don't block the main thread decoding it
-    img.onerror = () => {
-      img.alt = 'Photograph currently being preserved in archive';
-    };
-
-    picture.appendChild(sourceWebp);
-    picture.appendChild(img);
-
-    const figcaption = document.createElement('figcaption');
-    figcaption.className = 'photo-overlay';
-
-    const metaRow = document.createElement('div');
-    metaRow.className = 'photo-meta-row';
-    metaRow.innerHTML = `<span>STILLED IN LIGHT</span><span>·</span><span>HELD FOREVER</span>`;
-
-    const label = document.createElement('span');
-    label.className = 'photo-label';
-    label.textContent = image.caption || '';
-
-    figcaption.appendChild(metaRow);
-    figcaption.appendChild(label);
-    figure.appendChild(picture);
-    figure.appendChild(figcaption);
-
-    // Interactive 3D micro-tilt only for desktop fine pointers
-    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      let tiltRAF = null;
-      figure.addEventListener('mousemove', e => {
-        if (tiltRAF) cancelAnimationFrame(tiltRAF);
-        tiltRAF = requestAnimationFrame(() => {
-          const w = figure.offsetWidth || 300;
-          const h = figure.offsetHeight || 380;
-          const x = (e.offsetX / w) - 0.5;
-          const y = (e.offsetY / h) - 0.5;
-          figure.style.transform = `perspective(700px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) translateY(-4px)`;
-        });
-      }, { passive: true });
-
-      figure.addEventListener('mouseleave', () => {
-        if (tiltRAF) cancelAnimationFrame(tiltRAF);
-        figure.style.transform = '';
+    if (this.#imgEl) {
+      this.#imgEl.addEventListener('click', e => {
+        e.stopPropagation();
+        this.toggleZoom();
       });
     }
 
-    figure.addEventListener('click', () => openLightbox(images, idx));
+    if (this.#matBtn) {
+      this.#matBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        this.toggleMuseumMat();
+      });
+    }
 
-    // Keyboard support — figures aren't natively focusable/actionable.
-    figure.tabIndex = 0;
-    figure.setAttribute('role', 'button');
-    figure.setAttribute('aria-label', 'View photo: ' + (image.caption || 'Untitled'));
-    figure.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') {
+    if (this.#playBtn) {
+      this.#playBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        this.toggleSlideshow();
+      });
+    }
+
+    if (this.#zoomBtn) {
+      this.#zoomBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        this.toggleZoom();
+      });
+    }
+
+    // Touch swipe navigation
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX   = 0;
+    let touchEndY   = 0;
+    let isMultiTouch = false;
+
+    this.#lightboxEl.addEventListener('touchstart', e => {
+      if (e.touches.length > 1) {
+        isMultiTouch = true;
+        return;
+      }
+      isMultiTouch = false;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchEndX   = touchStartX;
+      touchEndY   = touchStartY;
+    }, { passive: true });
+
+    this.#lightboxEl.addEventListener('touchmove', e => {
+      if (e.touches.length > 1) isMultiTouch = true;
+      if (e.touches.length === 1) {
+        touchEndX = e.touches[0].clientX;
+        touchEndY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    this.#lightboxEl.addEventListener('touchend', () => {
+      if (isMultiTouch) return;
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+      const absX   = Math.abs(deltaX);
+      const absY   = Math.abs(deltaY);
+
+      if (absX > 45 && absX > absY * 1.2) {
+        this.navigate(deltaX < 0 ? 1 : -1);
+      } else if (deltaY > 80 && absX < 60) {
+        this.close();
+      }
+    }, { passive: true });
+
+    // Keyboard shortcuts & Focus Trap
+    document.addEventListener('keydown', e => {
+      if (!this.isOpen) return;
+
+      if (e.key === 'Escape') {
         e.preventDefault();
-        openLightbox(images, idx);
+        if (this.#isZoomed) {
+          this.#resetZoom();
+        } else {
+          this.close();
+        }
+        return;
+      }
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        this.navigate(-1);
+        return;
+      }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        this.navigate(1);
+        return;
+      }
+      if (e.key === 'm' || e.key === 'M') {
+        e.preventDefault();
+        this.toggleMuseumMat();
+        return;
+      }
+      if (e.key === 'p' || e.key === 'P') {
+        e.preventDefault();
+        this.toggleSlideshow();
+        return;
+      }
+      if (e.key === 'z' || e.key === 'Z') {
+        e.preventDefault();
+        this.toggleZoom();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const focusable = Array.from(this.#lightboxEl.querySelectorAll('button:not([disabled])'));
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last  = focusable[focusable.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+  }
+}
+
+
+/* ── 6. GALLERY PRESENTER ── */
+
+class GalleryPresenter {
+  #repository;
+  #transitionCoordinator;
+  #lightbox;
+  #cursorLoupe;
+  #revealObserver = null;
+
+  #categoryOrientation = {
+    predebut:      'portrait',
+    events:        'landscape',
+    institutional: 'landscape',
+  };
+  #categorySeriesFilter = {
+    predebut:      'ALL',
+    events:        'ALL',
+    institutional: 'ALL',
+  };
+  #viewMode = 'exhibition'; // 'exhibition' | 'contact'
+  #renderedSignature = {};
+
+  constructor(repository, transitionCoordinator, lightbox, cursorLoupe) {
+    this.#repository            = repository;
+    this.#transitionCoordinator = transitionCoordinator;
+    this.#lightbox              = lightbox;
+    this.#cursorLoupe           = cursorLoupe;
+
+    this.#setupIntersectionObserver();
+    this.#populateStaticCounts();
+    this.#bindControls();
+    this.#bindHeroFloatingFrames();
+    this.#initDefaultView();
+  }
+
+  get activeCategory() {
+    const activeTab = document.querySelector('.cat-tab.active');
+    return activeTab ? activeTab.dataset.tab : this.#repository.getCategories()[0];
+  }
+
+  switchTab(cat, animate = true) {
+    if (!this.#repository.isValidCategory(cat)) return;
+
+    const performSwitch = () => {
+      document.querySelectorAll('.cat-tab').forEach(tab => {
+        const isActive = tab.dataset.tab === cat;
+        tab.classList.toggle('active', isActive);
+        tab.setAttribute('aria-selected', String(isActive));
+        tab.tabIndex = isActive ? 0 : -1;
+      });
+
+      document.querySelectorAll('.cat-panel').forEach(panel => {
+        panel.classList.remove('active');
+      });
+
+      const panel = document.getElementById('panel-' + cat);
+      if (panel) panel.classList.add('active');
+
+      this.#ensureValidOrientation(cat);
+      this.#updateOrientToggleUI(cat);
+      this.#renderSeriesFilterBar(cat);
+      this.#ensureRendered(cat);
+
+      requestAnimationFrame(() => {
+        this.balanceGrid('grid-' + cat);
+      });
+
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', cat);
+      history.replaceState(null, '', url);
+    };
+
+    if (animate) {
+      this.#transitionCoordinator.run(performSwitch);
+    } else {
+      performSwitch();
+    }
+  }
+
+  setOrientation(mode) {
+    const cat = this.activeCategory;
+    if (!this.#repository.hasOrientation(cat, mode)) return;
+    if (this.#categoryOrientation[cat] === mode) return;
+
+    this.#transitionCoordinator.run(() => {
+      this.#categoryOrientation[cat] = mode;
+      this.#categorySeriesFilter[cat] = 'ALL';
+      this.#updateOrientToggleUI(cat);
+      this.#renderSeriesFilterBar(cat);
+      this.renderCategory(cat);
+    });
+  }
+
+  setSeriesFilter(seriesName) {
+    const cat = this.activeCategory;
+    if (this.#categorySeriesFilter[cat] === seriesName) return;
+
+    this.#transitionCoordinator.run(() => {
+      this.#categorySeriesFilter[cat] = seriesName;
+      this.#renderSeriesFilterBar(cat);
+      this.renderCategory(cat);
+    });
+  }
+
+  setViewMode(mode) {
+    if (mode !== 'exhibition' && mode !== 'contact') return;
+    if (this.#viewMode === mode) return;
+
+    this.#transitionCoordinator.run(() => {
+      this.#viewMode = mode;
+      document.querySelectorAll('.view-btn[data-view]').forEach(btn => {
+        const isActive = btn.dataset.view === mode;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
+      });
+
+      this.#renderedSignature = {};
+      this.renderCategory(this.activeCategory);
+    });
+  }
+
+  renderCategory(cat) {
+    this.#ensureValidOrientation(cat);
+    const orientation  = this.#categoryOrientation[cat];
+    const seriesFilter = this.#categorySeriesFilter[cat] || 'ALL';
+    const photos       = this.#repository.getPhotos(cat, orientation, seriesFilter);
+    const totalInMode  = this.#repository.getOrientationCount(cat, orientation);
+
+    const grid = document.getElementById('grid-' + cat);
+    if (grid) {
+      grid.classList.toggle('orient-landscape', orientation === 'landscape');
+      grid.classList.toggle('view-contact', this.#viewMode === 'contact');
+    }
+
+    this.#buildGridDOM('grid-' + cat, photos);
+    this.#updateStatusReadout(photos.length, totalInMode, orientation, seriesFilter);
+
+    requestAnimationFrame(() => {
+      this.balanceGrid('grid-' + cat);
+    });
+
+    this.#renderedSignature[cat] = `${orientation}:${seriesFilter}:${this.#viewMode}`;
+  }
+
+  balanceGrid(gridId) {
+    const grid = document.getElementById(gridId);
+    if (!grid || grid.offsetParent === null) return;
+
+    const items = Array.from(grid.querySelectorAll('.photo-item'));
+    items.forEach(item => item.classList.remove('fill-row'));
+    if (!items.length || this.#viewMode === 'contact') return;
+
+    const lastRowTop = items[items.length - 1].offsetTop;
+    for (let i = items.length - 1; i >= 0 && items[i].offsetTop === lastRowTop; i--) {
+      items[i].classList.add('fill-row');
+    }
+  }
+
+  #ensureValidOrientation(cat) {
+    let orientation = this.#categoryOrientation[cat];
+    if (!this.#repository.hasOrientation(cat, orientation)) {
+      if (this.#repository.hasOrientation(cat, 'landscape')) {
+        orientation = 'landscape';
+      } else if (this.#repository.hasOrientation(cat, 'portrait')) {
+        orientation = 'portrait';
+      }
+      this.#categoryOrientation[cat] = orientation;
+    }
+  }
+
+  #ensureRendered(cat) {
+    const expectedSig = `${this.#categoryOrientation[cat]}:${this.#categorySeriesFilter[cat]}:${this.#viewMode}`;
+    if (this.#renderedSignature[cat] !== expectedSig) {
+      this.renderCategory(cat);
+    }
+  }
+
+  #populateStaticCounts() {
+    this.#repository.getCategories().forEach(cat => {
+      const badge = document.getElementById('count-' + cat);
+      if (badge) {
+        const count = this.#repository.getCategoryTotalCount(cat);
+        badge.textContent = String(count).padStart(2, '0');
       }
     });
 
-    grid.appendChild(figure);
-  });
-}
-
-// Squares off an incomplete last row so the gallery never ends in a
-// dangling gap. Rather than recompute the column count (fragile — it'd
-// have to track every breakpoint/orientation rule in JS), this just
-// asks the browser which tiles actually landed in the bottom row (they
-// share the same offsetTop) and flags them to grow. CSS (.fill-row)
-// then lets flexbox split the leftover width evenly between exactly
-// those tiles — so the last row always reaches full width, and since
-// they all grow from the same starting width by the same amount, they
-// stay the same height as each other too.
-function balanceGrid(gridId) {
-  const grid = document.getElementById(gridId);
-  if (!grid || grid.offsetParent === null) return;
-
-  const items = Array.from(grid.querySelectorAll('.photo-item'));
-  items.forEach(item => item.classList.remove('fill-row'));
-  if (!items.length) return;
-
-  const lastRowTop = items[items.length - 1].offsetTop;
-  for (let i = items.length - 1; i >= 0 && items[i].offsetTop === lastRowTop; i--) {
-    items[i].classList.add('fill-row');
-  }
-}
-
-// Tracks which orientation each category's grid was most recently
-// built with (or undefined if it hasn't been built yet). Used so we
-// only rebuild a grid when its orientation actually changed.
-let renderedOrientation = {};
-
-function getActiveCat() {
-  const activeTab = document.querySelector('.cat-tab.active');
-  return activeTab ? activeTab.dataset.tab : CATS[0];
-}
-
-function renderCategory(cat) {
-  let orientation = categoryOrientation[cat];
-  const hasCurrent = Array.isArray(photoData[cat]?.[orientation]) && photoData[cat][orientation].length > 0;
-
-  // Auto-fallback if remembered orientation is empty for this category
-  if (!hasCurrent) {
-    if (Array.isArray(photoData[cat]?.landscape) && photoData[cat].landscape.length > 0) {
-      orientation = 'landscape';
-    } else if (Array.isArray(photoData[cat]?.portrait) && photoData[cat].portrait.length > 0) {
-      orientation = 'portrait';
+    const totalEl = document.getElementById('ledger-total-plates');
+    if (totalEl) {
+      totalEl.textContent = String(this.#repository.getTotalArchivalPlates());
     }
-    categoryOrientation[cat] = orientation;
-    updateOrientToggleUI(cat);
   }
 
-  const images = photoData[cat]?.[orientation] || [];
+  #updateOrientToggleUI(cat) {
+    const mode = this.#categoryOrientation[cat];
+    const portraitCount  = this.#repository.getOrientationCount(cat, 'portrait');
+    const landscapeCount = this.#repository.getOrientationCount(cat, 'landscape');
 
-  const grid = document.getElementById('grid-' + cat);
-  if (grid) grid.classList.toggle('orient-landscape', orientation === 'landscape');
+    const pCountEl = document.getElementById('orient-count-portrait');
+    const lCountEl = document.getElementById('orient-count-landscape');
+    if (pCountEl) pCountEl.textContent = portraitCount > 0 ? `(${portraitCount})` : '';
+    if (lCountEl) lCountEl.textContent = landscapeCount > 0 ? `(${landscapeCount})` : '';
 
-  buildGrid('grid-' + cat, images);
-  requestAnimationFrame(() => {
-    balanceGrid('grid-' + cat);
-  });
+    document.querySelectorAll('.orient-btn').forEach(btn => {
+      const orient = btn.dataset.orient;
+      const isAvailable = this.#repository.hasOrientation(cat, orient);
+      const isActive = orient === mode;
 
-  renderedOrientation[cat] = orientation;
-}
-
-// Builds a category's grid only if it hasn't been built yet, or if
-// its orientation has changed since it was last built.
-function ensureRendered(cat) {
-  if (renderedOrientation[cat] !== categoryOrientation[cat]) renderCategory(cat);
-}
-
-// Syncs the Portrait/Landscape toggle buttons to whichever mode the
-// given category is currently in, disabling options with 0 photos.
-function updateOrientToggleUI(cat) {
-  const mode = categoryOrientation[cat];
-  const hasPortrait = Array.isArray(photoData[cat]?.portrait) && photoData[cat].portrait.length > 0;
-  const hasLandscape = Array.isArray(photoData[cat]?.landscape) && photoData[cat].landscape.length > 0;
-
-  document.querySelectorAll('.orient-btn').forEach(btn => {
-    const orient = btn.dataset.orient;
-    const isAvailable = (orient === 'portrait' && hasPortrait) || (orient === 'landscape' && hasLandscape);
-    const isActive = orient === mode;
-
-    btn.classList.toggle('active', isActive);
-    btn.setAttribute('aria-pressed', isActive);
-    btn.disabled = !isAvailable;
-    btn.classList.toggle('disabled', !isAvailable);
-    btn.title = !isAvailable
-      ? `No ${orient} photos in this collection`
-      : `View ${orient} photos`;
-  });
-}
-
-// Portrait / Landscape toggle — only changes the orientation of the
-// category tab currently being viewed; prevents switching if mode is empty.
-function setOrientation(mode) {
-  const cat = getActiveCat();
-  const available = photoData[cat]?.[mode];
-  if (!available || !available.length) return;
-
-  categoryOrientation[cat] = mode;
-  updateOrientToggleUI(cat);
-  renderCategory(cat);
-}
-
-document.querySelectorAll('.orient-btn[data-orient]').forEach(btn => {
-  btn.addEventListener('click', () => setOrientation(btn.dataset.orient));
-});
-
-// Initial render: build whichever tab is active on load (Pre-Debut,
-// per the HTML's default "active" class) in its default orientation.
-const initialCat = getActiveCat();
-updateOrientToggleUI(initialCat);
-renderCategory(initialCat);
-
-// If we arrived via index.html?tab=events (or similar), open that tab.
-// switchTab() only builds that tab's grid if it isn't already built,
-// so this never triggers a redundant rebuild of the default tab.
-const requestedTab = new URLSearchParams(window.location.search).get('tab');
-if (requestedTab && CATS.includes(requestedTab)) {
-  switchTab(requestedTab);
-}
-
-
-// Column count changes at the 600px/900px breakpoints (and on phone
-// rotation), which changes what "a full last row" means — so the grid
-// needs to be rebalanced whenever the viewport width crosses one of
-// those. We rebuild+rebalance the tab that's actually visible right
-// away; other tabs are just marked stale so ensureRendered() rebuilds
-// them next time the user opens one, instead of doing invisible work.
-let resizeTimer = null;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => {
-    renderedOrientation = {};
-    renderCategory(getActiveCat());
-  }, 150);
-});
-
-
-/* ── 4. NAV SCROLL EFFECT + SCROLLSPY + CAMERA HUD ── */
-
-const navEl         = document.getElementById('navbar');
-const navLinks       = document.querySelectorAll('.nav-link[data-section]');
-const sections        = Array.from(navLinks)
-  .map(link => document.getElementById(link.dataset.section))
-  .filter(Boolean);
-
-// Story & Memory Chapter parameters per section
-const hudChapter = document.getElementById('hud-chapter');
-
-const chaptersBySection = {
-  hero:    'Fleeting Moments Held Forever',
-  about:   'The Heart Behind The Lens',
-  gallery: 'Heirlooms Preserved in Time',
-};
-
-let currentSectionId = null;
-
-function updateTelemetryHUD(sectionId) {
-  if (currentSectionId === sectionId) return;
-  currentSectionId = sectionId;
-  const chapterText = chaptersBySection[sectionId] || chaptersBySection.hero;
-  if (hudChapter) hudChapter.textContent = chapterText;
-}
-
-// Optical Focal Scale and Parallax Corner Tracking
-const focalBar   = document.getElementById('focal-bar');
-const focalThumb = document.getElementById('focal-thumb');
-const focalMarks = document.querySelectorAll('.focal-val');
-const vfTl       = document.querySelector('.vf-tl');
-const vfTr       = document.querySelector('.vf-tr');
-const vfBl       = document.querySelector('.vf-bl');
-const vfBr       = document.querySelector('.vf-br');
-
-function updateOpticalScrollHUD() {
-  const isDesktop = window.innerWidth > 1024;
-  if (isDesktop) {
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const scrollPct = docHeight > 0 ? Math.min(1, Math.max(0, window.scrollY / docHeight)) : 0;
-
-    if (focalBar)   focalBar.style.height = (scrollPct * 100) + '%';
-    if (focalThumb) focalThumb.style.top  = (scrollPct * 100) + '%';
-
-    focalMarks.forEach(mark => {
-      const target = parseFloat(mark.dataset.scroll || 0);
-      mark.classList.toggle('active', Math.abs(scrollPct - target) < 0.18);
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-pressed', String(isActive));
+      btn.disabled = !isAvailable;
+      btn.classList.toggle('disabled', !isAvailable);
+      btn.title = !isAvailable
+        ? `No ${orient} photos in this collection`
+        : `View ${orient} photos`;
     });
   }
 
-  // Viewfinder corner parallax only while hero section is near viewport
-  if (window.scrollY < window.innerHeight * 1.1) {
-    const shift = Math.min(22, window.scrollY * 0.05);
-    if (vfTl) vfTl.style.transform = `translate3d(${-shift}px, ${-shift}px, 0)`;
-    if (vfTr) vfTr.style.transform = `translate3d(${shift}px, ${-shift}px, 0)`;
-    if (vfBl) vfBl.style.transform = `translate3d(${-shift}px, ${shift}px, 0)`;
-    if (vfBr) vfBr.style.transform = `translate3d(${shift}px, ${shift}px, 0)`;
-  }
-}
+  #renderSeriesFilterBar(cat) {
+    const bar = document.getElementById('series-filter-bar');
+    if (!bar) return;
+    bar.innerHTML = '';
 
-function updateNavOnScroll() {
-  if (navEl) {
-    const isScrolled = window.scrollY > 60;
-    navEl.style.background = isScrolled
-      ? 'rgba(250, 248, 245, 0.98)'
-      : 'linear-gradient(to bottom, rgba(250, 248, 245, 0.95), transparent)';
-    navEl.style.boxShadow = isScrolled ? '0 4px 20px rgba(0, 0, 0, 0.04)' : 'none';
-    navEl.style.borderBottom = isScrolled ? '1px solid rgba(17, 17, 17, 0.08)' : '1px solid transparent';
-  }
+    const orientation  = this.#categoryOrientation[cat];
+    const activeSeries = this.#categorySeriesFilter[cat] || 'ALL';
+    const groups       = this.#repository.getSeriesGroups(cat, orientation);
+    const totalCount   = this.#repository.getOrientationCount(cat, orientation);
 
-  updateOpticalScrollHUD();
+    const createPill = (label, value, count) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      const isActive = activeSeries === value;
+      btn.className = 'series-pill' + (isActive ? ' active' : '');
+      btn.setAttribute('aria-pressed', String(isActive));
+      btn.innerHTML = `<span>${label}</span><span class="series-pill-count">${String(count).padStart(2, '0')}</span>`;
+      btn.addEventListener('click', () => this.setSeriesFilter(value));
+      return btn;
+    };
 
-  // Return to Surface (Back to Top) visibility toggle
-  const bttBtn = document.getElementById('back-to-top');
-  if (bttBtn) {
-    bttBtn.classList.toggle('visible', window.scrollY > 480);
-  }
-
-  if (!sections.length) return;
-
-  // Highlight active section & update camera HUD telemetry
-  const scrollPos = window.scrollY + 140;
-  let current = sections[0];
-  sections.forEach(section => {
-    if (section.offsetTop <= scrollPos) current = section;
-  });
-
-  navLinks.forEach(link => {
-    link.classList.toggle('active', link.dataset.section === current.id);
-  });
-
-  if (current) updateTelemetryHUD(current.id);
-}
-
-// Return to top button click handler
-const bttBtn = document.getElementById('back-to-top');
-if (bttBtn) {
-  bttBtn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-}
-
-// requestAnimationFrame-throttled scroll handler
-let scrollTicking = false;
-window.addEventListener('scroll', () => {
-  if (!scrollTicking) {
-    window.requestAnimationFrame(() => {
-      updateNavOnScroll();
-      scrollTicking = false;
+    bar.appendChild(createPill('All Plates', 'ALL', totalCount));
+    groups.forEach(group => {
+      bar.appendChild(createPill(group.name, group.name, group.count));
     });
-    scrollTicking = true;
   }
-}, { passive: true });
 
-// Clickable hero floating frames — opens directly into Lightbox
-document.querySelectorAll('.hero-frame').forEach(frame => {
-  const handler = () => {
-    const cat = frame.dataset.cat;
-    const orient = frame.dataset.orient || 'portrait';
-    const idx = parseInt(frame.dataset.idx, 10) || 0;
-    const images = (photoData[cat]?.[orient] || []).map(normalizePhoto);
-    if (images.length) {
-      openLightbox(images, Math.min(idx, images.length - 1));
+  #updateStatusReadout(shownCount, totalCount, orientation, seriesFilter) {
+    const readout = document.getElementById('archive-status-readout');
+    if (!readout) return;
+    const modeLabel = this.#viewMode === 'contact' ? 'CONTACT SHEET' : 'EXHIBITION';
+    const filterLabel = seriesFilter === 'ALL' ? 'ALL SERIES' : seriesFilter.toUpperCase();
+    readout.textContent = `${modeLabel} · ${String(shownCount).padStart(2, '0')}/${String(totalCount).padStart(2, '0')} ${orientation.toUpperCase()} PLATES · ${filterLabel}`;
+  }
+
+  #setupIntersectionObserver() {
+    if (!('IntersectionObserver' in window) || this.#transitionCoordinator.prefersReducedMotion) {
+      return;
     }
+    this.#revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px 40px 0px' });
+  }
+
+  #buildGridDOM(gridId, photos) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+
+    grid.innerHTML = '';
+
+    if (!photos.length) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.innerHTML = `
+        <p class="empty-state-title">Series Curated in Alternate Format</p>
+        <p class="empty-state-sub">Switch orientation or series filter above to explore this collection.</p>
+      `;
+      grid.appendChild(empty);
+      return;
+    }
+
+    const isFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    photos.forEach((asset, idx) => {
+      const figure = document.createElement('figure');
+      figure.className = 'photo-item';
+      figure.style.transitionDelay = `${Math.min(idx * 45, 280)}ms`;
+
+      if (!this.#revealObserver || this.#transitionCoordinator.prefersReducedMotion) {
+        figure.classList.add('is-revealed');
+      } else {
+        this.#revealObserver.observe(figure);
+      }
+
+      // 4 Viewfinder focus corners
+      ['tl', 'tr', 'bl', 'br'].forEach(pos => {
+        const corner = document.createElement('span');
+        corner.className = `vf-c vf-c-${pos}`;
+        corner.setAttribute('aria-hidden', 'true');
+        figure.appendChild(corner);
+      });
+
+      // Archival Plate Index Badge
+      const tag = document.createElement('span');
+      tag.className = 'photo-tag';
+      tag.textContent = asset.momentTag;
+      figure.appendChild(tag);
+
+      const picture = document.createElement('picture');
+      const sourceWebp = document.createElement('source');
+      sourceWebp.srcset = asset.webpSrc;
+      sourceWebp.type = 'image/webp';
+
+      const img = document.createElement('img');
+      img.src = asset.src;
+      img.alt = asset.caption;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.onerror = () => {
+        img.alt = 'Photograph currently being preserved in archive';
+      };
+
+      picture.appendChild(sourceWebp);
+      picture.appendChild(img);
+
+      const figcaption = document.createElement('figcaption');
+      figcaption.className = 'photo-overlay';
+
+      const metaRow = document.createElement('div');
+      metaRow.className = 'photo-meta-row';
+      metaRow.innerHTML = `<span>${asset.plateNumber}</span><span>·</span><span>HELD FOREVER</span>`;
+
+      const label = document.createElement('span');
+      label.className = 'photo-label';
+      label.textContent = asset.caption;
+
+      figcaption.appendChild(metaRow);
+      figcaption.appendChild(label);
+      figure.appendChild(picture);
+      figure.appendChild(figcaption);
+
+      // Subtle 3D micro-tilt on fine pointers when reduced motion is off
+      if (isFinePointer && !this.#transitionCoordinator.prefersReducedMotion && this.#viewMode !== 'contact') {
+        let tiltRAF = null;
+        figure.addEventListener('mousemove', e => {
+          if (tiltRAF) cancelAnimationFrame(tiltRAF);
+          tiltRAF = requestAnimationFrame(() => {
+            const w = figure.offsetWidth || 300;
+            const h = figure.offsetHeight || 380;
+            const x = (e.offsetX / w) - 0.5;
+            const y = (e.offsetY / h) - 0.5;
+            figure.style.transform = `perspective(800px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg) translateY(-3px)`;
+          });
+        }, { passive: true });
+
+        figure.addEventListener('mouseleave', () => {
+          if (tiltRAF) cancelAnimationFrame(tiltRAF);
+          figure.style.transform = '';
+        });
+      }
+
+      this.#cursorLoupe?.attachInteractiveTarget(figure, `INSPECT ${asset.plateNumber}`);
+
+      const activate = () => this.#lightbox.open(photos, idx, figure);
+      figure.addEventListener('click', activate);
+      figure.tabIndex = 0;
+      figure.setAttribute('role', 'button');
+      figure.setAttribute('aria-label', `View photo: ${asset.caption} (${asset.plateNumber})`);
+      figure.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          activate();
+        }
+      });
+
+      grid.appendChild(figure);
+    });
+  }
+
+  #bindControls() {
+    document.querySelectorAll('.cat-tab[data-tab]').forEach(tab => {
+      tab.addEventListener('click', () => this.switchTab(tab.dataset.tab));
+    });
+
+    const tabListEl = document.querySelector('.cat-tabs');
+    if (tabListEl) {
+      tabListEl.addEventListener('keydown', e => {
+        const tabs = Array.from(tabListEl.querySelectorAll('.cat-tab'));
+        const currentIndex = tabs.indexOf(document.activeElement);
+        if (currentIndex === -1) return;
+
+        let newIndex = null;
+        if (e.key === 'ArrowRight') newIndex = (currentIndex + 1) % tabs.length;
+        if (e.key === 'ArrowLeft')  newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+        if (e.key === 'Home')       newIndex = 0;
+        if (e.key === 'End')        newIndex = tabs.length - 1;
+
+        if (newIndex !== null) {
+          e.preventDefault();
+          tabs[newIndex].focus();
+          this.switchTab(tabs[newIndex].dataset.tab);
+        }
+      });
+    }
+
+    document.querySelectorAll('.orient-btn[data-orient]').forEach(btn => {
+      btn.addEventListener('click', () => this.setOrientation(btn.dataset.orient));
+    });
+
+    document.querySelectorAll('.view-btn[data-view]').forEach(btn => {
+      btn.addEventListener('click', () => this.setViewMode(btn.dataset.view));
+    });
+
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        this.#renderedSignature = {};
+        this.renderCategory(this.activeCategory);
+      }, 150);
+    });
+  }
+
+  #bindHeroFloatingFrames() {
+    document.querySelectorAll('.hero-frame').forEach(frame => {
+      this.#cursorLoupe?.attachInteractiveTarget(frame, 'OPEN ARCHIVE PLATE');
+
+      const handler = () => {
+        const cat    = frame.dataset.cat;
+        const orient = frame.dataset.orient || 'portrait';
+        const idx    = parseInt(frame.dataset.idx, 10) || 0;
+        const photos = this.#repository.getPhotos(cat, orient, 'ALL');
+        if (photos.length) {
+          this.#lightbox.open(photos, Math.min(idx, photos.length - 1), null);
+        }
+      };
+
+      frame.addEventListener('click', handler);
+      frame.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handler();
+        }
+      });
+    });
+  }
+
+  #initDefaultView() {
+    const requestedTab = new URLSearchParams(window.location.search).get('tab');
+    const startCat = (requestedTab && this.#repository.isValidCategory(requestedTab))
+      ? requestedTab
+      : this.activeCategory;
+    this.switchTab(startCat, false);
+  }
+}
+
+
+/* ── 7. TELEMETRY HUD & SCROLL CONTINUUM CONTROLLER ── */
+
+class TelemetryHudController {
+  #navEl;
+  #navLinks;
+  #sections;
+  #hudChapter;
+  #focalBar;
+  #focalThumb;
+  #focalMarks;
+  #bttBtn;
+  #vfCorners;
+  #clockEl;
+  #currentSectionId = null;
+
+  static #CHAPTERS = {
+    hero:    'Fleeting Moments Held Forever',
+    about:   'The Heart Behind The Lens',
+    gallery: 'Heirlooms Preserved in Time',
+    inquire: 'Commissions & Private Bookings',
   };
 
-  frame.addEventListener('click', handler);
-  frame.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handler();
-    }
-  });
-});
+  constructor() {
+    this.#navEl      = document.getElementById('navbar');
+    this.#navLinks   = Array.from(document.querySelectorAll('.nav-link[data-section]'));
+    this.#sections   = this.#navLinks
+      .map(link => document.getElementById(link.dataset.section))
+      .filter(Boolean);
+    this.#hudChapter = document.getElementById('hud-chapter');
+    this.#focalBar   = document.getElementById('focal-bar');
+    this.#focalThumb = document.getElementById('focal-thumb');
+    this.#focalMarks = document.querySelectorAll('.focal-val');
+    this.#bttBtn     = document.getElementById('back-to-top');
+    this.#clockEl    = document.getElementById('ft-local-time');
+    this.#vfCorners  = {
+      tl: document.querySelector('.vf-tl'),
+      tr: document.querySelector('.vf-tr'),
+      bl: document.querySelector('.vf-bl'),
+      br: document.querySelector('.vf-br'),
+    };
 
-updateNavOnScroll();
+    this.#bindScroll();
+    this.#initLocalClock();
+    this.updateOnScroll();
+  }
+
+  updateOnScroll() {
+    if (this.#navEl) {
+      this.#navEl.classList.toggle('is-scrolled', window.scrollY > 50);
+    }
+
+    this.#updateOpticalContinuum();
+
+    if (this.#bttBtn) {
+      this.#bttBtn.classList.toggle('visible', window.scrollY > 480);
+    }
+
+    if (!this.#sections.length) return;
+
+    const scrollPos = window.scrollY + 180;
+    let current = this.#sections[0];
+    this.#sections.forEach(section => {
+      if (section.offsetTop <= scrollPos) current = section;
+    });
+
+    this.#navLinks.forEach(link => {
+      link.classList.toggle('active', link.dataset.section === current.id);
+    });
+
+    if (current && this.#currentSectionId !== current.id) {
+      this.#currentSectionId = current.id;
+      if (this.#hudChapter) {
+        this.#hudChapter.textContent = TelemetryHudController.#CHAPTERS[current.id] || TelemetryHudController.#CHAPTERS.hero;
+      }
+    }
+  }
+
+  #updateOpticalContinuum() {
+    const isDesktop = window.innerWidth > 1024;
+    if (isDesktop) {
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPct = docHeight > 0 ? Math.min(1, Math.max(0, window.scrollY / docHeight)) : 0;
+
+      if (this.#focalBar)   this.#focalBar.style.height = `${scrollPct * 100}%`;
+      if (this.#focalThumb) this.#focalThumb.style.top  = `${scrollPct * 100}%`;
+
+      this.#focalMarks.forEach(mark => {
+        const target = parseFloat(mark.dataset.scroll || '0');
+        mark.classList.toggle('active', Math.abs(scrollPct - target) < 0.18);
+      });
+    }
+
+    if (window.scrollY < window.innerHeight * 1.1) {
+      const shift = Math.min(22, window.scrollY * 0.05);
+      const { tl, tr, bl, br } = this.#vfCorners;
+      if (tl) tl.style.transform = `translate3d(${-shift}px, ${-shift}px, 0)`;
+      if (tr) tr.style.transform = `translate3d(${shift}px, ${-shift}px, 0)`;
+      if (bl) bl.style.transform = `translate3d(${-shift}px, ${shift}px, 0)`;
+      if (br) br.style.transform = `translate3d(${shift}px, ${shift}px, 0)`;
+    }
+  }
+
+  #bindScroll() {
+    if (this.#bttBtn) {
+      this.#bttBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    let scrollTicking = false;
+    window.addEventListener('scroll', () => {
+      if (!scrollTicking) {
+        window.requestAnimationFrame(() => {
+          this.updateOnScroll();
+          scrollTicking = false;
+        });
+        scrollTicking = true;
+      }
+    }, { passive: true });
+  }
+
+  #initLocalClock() {
+    if (!this.#clockEl) return;
+    const updateClock = () => {
+      try {
+        const formatted = new Intl.DateTimeFormat('en-US', {
+          timeZone: 'Asia/Manila',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true,
+        }).format(new Date());
+        this.#clockEl.textContent = `CABUYAO, PH · ${formatted} PHT`;
+      } catch {
+        this.#clockEl.textContent = 'CABUYAO, PH · ARCHIVE EDITION';
+      }
+    };
+    updateClock();
+    setInterval(updateClock, 30000);
+  }
+}
+
+
+/* ── 8. APPLICATION BOOTSTRAP ── */
+
+const repository            = new PortfolioRepository(photoData, CATS);
+const transitionCoordinator = new ViewTransitionCoordinator();
+const themeManager          = new ThemeManager(transitionCoordinator);
+const cursorLoupe           = new CursorLoupeController();
+const lightboxController    = new LightboxController(transitionCoordinator, cursorLoupe);
+const galleryPresenter      = new GalleryPresenter(repository, transitionCoordinator, lightboxController, cursorLoupe);
+const telemetryHud          = new TelemetryHudController();
+
+// Global bindings preserved for declarative HTML attributes
+window.closeLightbox = () => lightboxController.close();
+window.lightboxNav   = dir => lightboxController.navigate(dir);
+window.switchTab     = cat => galleryPresenter.switchTab(cat);
