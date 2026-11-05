@@ -207,9 +207,11 @@ class ViewTransitionCoordinator {
         mutationCallback();
       });
       if (typeof afterCallback === 'function') {
-        transition.finished.finally(() => {
-          afterCallback();
-        });
+        transition.finished
+          .catch(() => {})
+          .finally(() => {
+            afterCallback();
+          });
       }
     } catch {
       mutationCallback();
@@ -359,6 +361,14 @@ class LightboxController {
   #images = [];
   #currentIndex = 0;
   #isZoomed = false;
+  #panX = 0;
+  #panY = 0;
+  #isPanning = false;
+  #dragStartX = 0;
+  #dragStartY = 0;
+  #startPanX = 0;
+  #startPanY = 0;
+  #hasDragged = false;
   #slideshowInterval = null;
   #lastFocusedElement = null;
   #activeSourceFigure = null;
@@ -475,6 +485,11 @@ class LightboxController {
       }
     }
     this.#currentIndex = (this.#currentIndex + dir + this.#images.length) % this.#images.length;
+    if (this.#imgEl && !this.#transitionCoordinator.prefersReducedMotion) {
+      this.#imgEl.classList.remove('frame-crossfade');
+      void this.#imgEl.offsetWidth;
+      this.#imgEl.classList.add('frame-crossfade');
+    }
     this.#updateView();
   }
 
@@ -537,10 +552,18 @@ class LightboxController {
 
   #resetZoom() {
     this.#isZoomed = false;
+    this.#panX = 0;
+    this.#panY = 0;
+    this.#isPanning = false;
+    this.#hasDragged = false;
     if (this.#state === LightboxState.ZOOMED) {
       this.#state = LightboxState.VIEWING;
     }
-    if (this.#imgEl) this.#imgEl.classList.remove('zoomed');
+    if (this.#imgEl) {
+      this.#imgEl.classList.remove('zoomed');
+      this.#imgEl.classList.remove('is-panning');
+      this.#imgEl.style.transform = '';
+    }
     if (this.#zoomBtn) this.#zoomBtn.setAttribute('aria-pressed', 'false');
   }
 
@@ -728,8 +751,44 @@ class LightboxController {
     }
 
     if (this.#imgEl) {
+      this.#imgEl.addEventListener('mousedown', e => {
+        if (!this.#isZoomed) return;
+        e.preventDefault();
+        this.#dragStartX = e.clientX;
+        this.#dragStartY = e.clientY;
+        this.#startPanX  = this.#panX;
+        this.#startPanY  = this.#panY;
+        this.#hasDragged = false;
+        this.#isPanning  = true;
+      });
+
+      window.addEventListener('mousemove', e => {
+        if (!this.#isPanning || !this.#isZoomed) return;
+        const deltaX = e.clientX - this.#dragStartX;
+        const deltaY = e.clientY - this.#dragStartY;
+        if (Math.hypot(deltaX, deltaY) > 4) {
+          this.#hasDragged = true;
+          this.#imgEl.classList.add('is-panning');
+        }
+        const maxPan = 180;
+        this.#panX = Math.max(-maxPan, Math.min(maxPan, this.#startPanX + deltaX));
+        this.#panY = Math.max(-maxPan, Math.min(maxPan, this.#startPanY + deltaY));
+        this.#imgEl.style.transform = `scale(1.85) translate3d(${this.#panX / 1.85}px, ${this.#panY / 1.85}px, 0)`;
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (this.#isPanning) {
+          this.#isPanning = false;
+          this.#imgEl?.classList.remove('is-panning');
+        }
+      });
+
       this.#imgEl.addEventListener('click', e => {
         e.stopPropagation();
+        if (this.#hasDragged) {
+          this.#hasDragged = false;
+          return;
+        }
         this.toggleZoom();
       });
     }
@@ -755,7 +814,7 @@ class LightboxController {
       this.#handleHashChange(evt);
     });
 
-    // Touch swipe navigation
+    // Touch swipe navigation and zoom drag-to-pan
     let touchStartX = 0;
     let touchStartY = 0;
     let touchEndX   = 0;
@@ -772,6 +831,15 @@ class LightboxController {
       touchStartY = e.touches[0].clientY;
       touchEndX   = touchStartX;
       touchEndY   = touchStartY;
+
+      if (this.#isZoomed && e.touches.length === 1) {
+        this.#dragStartX = touchStartX;
+        this.#dragStartY = touchStartY;
+        this.#startPanX  = this.#panX;
+        this.#startPanY  = this.#panY;
+        this.#hasDragged = false;
+        this.#isPanning  = true;
+      }
     }, { passive: true });
 
     this.#lightboxEl.addEventListener('touchmove', e => {
@@ -779,10 +847,30 @@ class LightboxController {
       if (e.touches.length === 1) {
         touchEndX = e.touches[0].clientX;
         touchEndY = e.touches[0].clientY;
+
+        if (this.#isZoomed && this.#isPanning) {
+          const deltaX = touchEndX - this.#dragStartX;
+          const deltaY = touchEndY - this.#dragStartY;
+          if (Math.hypot(deltaX, deltaY) > 4) {
+            this.#hasDragged = true;
+            this.#imgEl?.classList.add('is-panning');
+          }
+          const maxPan = 180;
+          this.#panX = Math.max(-maxPan, Math.min(maxPan, this.#startPanX + deltaX));
+          this.#panY = Math.max(-maxPan, Math.min(maxPan, this.#startPanY + deltaY));
+          if (this.#imgEl) {
+            this.#imgEl.style.transform = `scale(1.85) translate3d(${this.#panX / 1.85}px, ${this.#panY / 1.85}px, 0)`;
+          }
+        }
       }
     }, { passive: true });
 
     this.#lightboxEl.addEventListener('touchend', () => {
+      if (this.#isZoomed) {
+        this.#isPanning = false;
+        this.#imgEl?.classList.remove('is-panning');
+        return;
+      }
       if (isMultiTouch) return;
       const deltaX = touchEndX - touchStartX;
       const deltaY = touchEndY - touchStartY;
@@ -882,7 +970,7 @@ class GalleryPresenter {
     return activeTab ? activeTab.dataset.tab : this.#repository.getCategories()[0];
   }
 
-  switchTab(cat, animate = true) {
+  switchTab(cat, animate = true, updateHistory = true) {
     if (!this.#repository.isValidCategory(cat)) return;
 
     const performSwitch = () => {
@@ -904,9 +992,18 @@ class GalleryPresenter {
       this.#updateOrientToggleUI(cat);
       this.#ensureRendered(cat);
 
-      const url = new URL(window.location.href);
-      url.searchParams.set('tab', cat);
-      history.replaceState(null, '', url);
+      if (window.location && typeof history !== 'undefined') {
+        const url = new URL(window.location.href);
+        const currentParam = url.searchParams.get('tab');
+        if (currentParam !== cat) {
+          url.searchParams.set('tab', cat);
+          if (updateHistory && typeof history.pushState === 'function') {
+            history.pushState({ tab: cat }, '', url);
+          } else if (typeof history.replaceState === 'function') {
+            history.replaceState({ tab: cat }, '', url);
+          }
+        }
+      }
     };
 
     if (animate) {
@@ -1065,6 +1162,12 @@ class GalleryPresenter {
         img.alt = 'Photograph currently being preserved in archive';
       };
 
+      if (img.complete) {
+        img.classList.add('is-loaded');
+      } else {
+        img.addEventListener('load', () => img.classList.add('is-loaded'), { once: true });
+      }
+
       picture.appendChild(sourceWebp);
       picture.appendChild(img);
 
@@ -1126,6 +1229,13 @@ class GalleryPresenter {
     document.querySelectorAll('.orient-btn[data-orient]').forEach(btn => {
       btn.addEventListener('click', () => this.setOrientation(btn.dataset.orient));
     });
+
+    window.addEventListener('popstate', e => {
+      const tab = e?.state?.tab || new URLSearchParams(window.location?.search || '').get('tab');
+      if (tab && this.#repository.isValidCategory(tab) && tab !== this.activeCategory) {
+        this.switchTab(tab, true, false);
+      }
+    });
   }
 
   #bindHeroFloatingFrames() {
@@ -1153,11 +1263,16 @@ class GalleryPresenter {
   }
 
   #initDefaultView() {
-    const requestedTab = new URLSearchParams(window.location.search).get('tab');
+    const requestedTab = new URLSearchParams(window.location?.search || '').get('tab');
     const startCat = (requestedTab && this.#repository.isValidCategory(requestedTab))
       ? requestedTab
       : this.activeCategory;
-    this.switchTab(startCat, false);
+    this.switchTab(startCat, false, false);
+    if (window.location && history?.replaceState) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', startCat);
+      history.replaceState({ tab: startCat }, '', url);
+    }
     this.#initHashPhoto();
   }
 
@@ -1194,6 +1309,7 @@ class TelemetryHudController {
   #hudChapter;
   #bttBtn;
   #currentSectionId = null;
+  #lastScrollY = 0;
 
   static #CHAPTERS = {
     hero:    'Fleeting Moments Held Forever',
@@ -1217,12 +1333,21 @@ class TelemetryHudController {
   }
 
   updateOnScroll() {
+    const scrollY = window.scrollY || 0;
     if (this.#navEl) {
-      this.#navEl.classList.toggle('is-scrolled', window.scrollY > 50);
+      this.#navEl.classList.toggle('is-scrolled', scrollY > 50);
+
+      // Smart hide-on-scroll-down / show-on-scroll-up
+      if (scrollY > 120 && scrollY > this.#lastScrollY + 6) {
+        this.#navEl.classList.add('nav-hidden');
+      } else if (scrollY < this.#lastScrollY - 6 || scrollY <= 50) {
+        this.#navEl.classList.remove('nav-hidden');
+      }
     }
     if (this.#bttBtn) {
-      this.#bttBtn.classList.toggle('visible', window.scrollY > 480);
+      this.#bttBtn.classList.toggle('visible', scrollY > 480);
     }
+    this.#lastScrollY = scrollY;
   }
 
   #setupScrollspy() {
@@ -1274,7 +1399,121 @@ class TelemetryHudController {
 }
 
 
-/* ── 8. APPLICATION BOOTSTRAP ── */
+/* ── 8. EDITORIAL MONOGRAPH MOTION CONTROLLER ── */
+
+class EditorialMotionController {
+  #aboutSection;
+  #aboutWrap;
+  #inquireSection;
+  #heroMonument;
+  #counterEl;
+  #isCounterAnimated = false;
+  #scrollTicking = false;
+  #transitionCoordinator;
+
+  constructor(transitionCoordinator) {
+    this.#transitionCoordinator = transitionCoordinator;
+    this.#aboutSection   = document.getElementById('about');
+    this.#aboutWrap      = document.querySelector('.about-wrap');
+    this.#inquireSection = document.getElementById('inquire');
+    this.#heroMonument   = document.querySelector('.hero-monument');
+    this.#counterEl      = document.getElementById('ledger-total-plates');
+
+    this.#initScrollObservers();
+    this.#initHeroParallax();
+  }
+
+  #initScrollObservers() {
+    if (this.#transitionCoordinator?.prefersReducedMotion) {
+      if (this.#aboutWrap) this.#aboutWrap.classList.add('is-in-view');
+      if (this.#inquireSection) this.#inquireSection.classList.add('is-in-view');
+      if (this.#counterEl) this.#counterEl.textContent = '28';
+      return;
+    }
+
+    if (typeof IntersectionObserver === 'undefined') {
+      if (this.#aboutWrap) this.#aboutWrap.classList.add('is-in-view');
+      if (this.#inquireSection) this.#inquireSection.classList.add('is-in-view');
+      return;
+    }
+
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          if (entry.target === this.#aboutSection) {
+            if (this.#aboutWrap) this.#aboutWrap.classList.add('is-in-view');
+            this.#animateCounter(28);
+          } else if (entry.target === this.#inquireSection) {
+            entry.target.classList.add('is-in-view');
+          }
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.12,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    if (this.#aboutSection) revealObserver.observe(this.#aboutSection);
+    if (this.#inquireSection) revealObserver.observe(this.#inquireSection);
+  }
+
+  #animateCounter(target) {
+    if (this.#isCounterAnimated || !this.#counterEl) return;
+    this.#isCounterAnimated = true;
+
+    if (this.#transitionCoordinator?.prefersReducedMotion) {
+      this.#counterEl.textContent = String(target);
+      return;
+    }
+
+    const duration = 1100;
+    const startVal = 1;
+    const startTime = performance.now();
+
+    const step = (now) => {
+      const elapsed = Math.min(now - startTime, duration);
+      const progress = elapsed / duration;
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(startVal + (target - startVal) * ease);
+      this.#counterEl.textContent = String(current);
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        this.#counterEl.textContent = String(target);
+      }
+    };
+
+    requestAnimationFrame(step);
+  }
+
+  #initHeroParallax() {
+    if (!this.#heroMonument || this.#transitionCoordinator?.prefersReducedMotion) return;
+
+    window.addEventListener('scroll', () => {
+      if (!this.#scrollTicking) {
+        requestAnimationFrame(() => {
+          this.#applyParallax();
+          this.#scrollTicking = false;
+        });
+        this.#scrollTicking = true;
+      }
+    }, { passive: true });
+  }
+
+  #applyParallax() {
+    if (window.innerWidth < 960) return;
+    const scrollY = window.scrollY || 0;
+    if (scrollY < window.innerHeight) {
+      const offset = Math.min(scrollY * 0.07, 36);
+      this.#heroMonument.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0)`;
+    }
+  }
+}
+
+
+/* ── 9. APPLICATION BOOTSTRAP ── */
 
 const repository            = new PortfolioRepository(photoData, CATS);
 const transitionCoordinator = new ViewTransitionCoordinator();
@@ -1283,3 +1522,4 @@ const cursorLoupe           = new CursorLoupeController();
 const lightboxController    = new LightboxController(transitionCoordinator, cursorLoupe);
 const galleryPresenter      = new GalleryPresenter(repository, transitionCoordinator, lightboxController, cursorLoupe);
 const telemetryHud          = new TelemetryHudController();
+const editorialMotion       = new EditorialMotionController(transitionCoordinator);
