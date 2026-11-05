@@ -784,15 +784,15 @@ html[data-theme="dark"] .theme-icon-moon { display: none; }
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
   width: 100%;
 }
 
 .hero-deck {
   position: relative;
   width: 100%;
-  max-width: min(480px, 100%);
-  height: clamp(380px, 48vh, 480px);
+  max-width: min(560px, 100%);
+  height: clamp(380px, 48vh, 470px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -801,42 +801,58 @@ html[data-theme="dark"] .theme-icon-moon { display: none; }
 
 .hero-card {
   position: absolute;
-  width: clamp(220px, 26vw, 300px);
-  bottom: 12px;
+  width: clamp(210px, 22vw, 240px);
+  bottom: 8px;
   left: 50%;
-  margin-left: calc(-1 * clamp(220px, 26vw, 300px) / 2);
-  transform-origin: 50% 120%;
+  margin-left: calc(-1 * clamp(210px, 22vw, 240px) / 2);
+  transform-origin: 50% 110%;
   cursor: pointer;
   touch-action: manipulation;
-  transition: transform 0.45s var(--shutter-ease), box-shadow 0.45s var(--shutter-ease), opacity 0.35s ease, filter 0.35s ease, z-index 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, z-index 0s;
   will-change: transform;
 }
 
-/* Card Fanning (playing card deck layout) */
+/* Card Fanning (playing card deck layout: generous spread so all 3 photos are clearly visible) */
 .hero-card-left {
   z-index: 1;
-  transform: rotate(-14deg) translate(-42px, 8px);
+  transform: translate(-130px, 12px) rotate(-8deg);
   animation: heroMonumentReveal 0.85s var(--motion-ease-cinematic) 0.15s backwards;
 }
 
 .hero-card-center {
   z-index: 2;
-  transform: rotate(-1deg) translate(0, 0);
+  transform: translate(0, 0) rotate(-1deg);
   animation: heroMonumentReveal 0.85s var(--motion-ease-cinematic) 0.25s backwards;
 }
 
 .hero-card-right {
   z-index: 3;
-  transform: rotate(12deg) translate(42px, 10px);
+  transform: translate(130px, 14px) rotate(8deg);
   animation: heroMonumentReveal 0.85s var(--motion-ease-cinematic) 0.35s backwards;
 }
 
-/* Tactile Hover & Focus Interaction */
+/* Stable Hover & Focus: lifts in-place along card's own axis without jumping horizontally */
 .hero-card:hover,
 .hero-card:focus-visible {
   z-index: 10 !important;
-  transform: rotate(0deg) translate(0, -18px) scale(1.05);
   outline: none;
+}
+
+.hero-card-left:hover,
+.hero-card-left:focus-visible {
+  transform: translate(-130px, -14px) rotate(-5deg) scale(1.04);
+}
+
+.hero-card-center:hover,
+.hero-card-center:focus-visible {
+  transform: translate(0, -18px) rotate(0deg) scale(1.04);
+}
+
+.hero-card-right:hover,
+.hero-card-right:focus-visible {
+  transform: translate(130px, -14px) rotate(5deg) scale(1.04);
 }
 
 .hero-card:focus-visible .hero-monument-mat {
@@ -846,31 +862,73 @@ html[data-theme="dark"] .theme-icon-moon { display: none; }
 
 .hero-card:hover .hero-monument-mat {
   border-color: var(--border-strong);
-  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
 }
 
-.hero-deck:hover .hero-card:not(:hover):not(:focus-visible) {
-  opacity: 0.86;
-  filter: brightness(0.95);
+/* Tablet adjustments (600px - 959px) */
+@media (min-width: 600px) and (max-width: 959px) {
+  .hero-deck {
+    max-width: 480px;
+    height: 420px;
+  }
+  .hero-card {
+    width: 200px;
+    margin-left: -100px;
+  }
+  .hero-card-left {
+    transform: translate(-105px, 10px) rotate(-7deg);
+  }
+  .hero-card-center {
+    transform: translate(0, 0) rotate(-1deg);
+  }
+  .hero-card-right {
+    transform: translate(105px, 12px) rotate(7deg);
+  }
+  .hero-card-left:hover,
+  .hero-card-left:focus-visible {
+    transform: translate(-105px, -12px) rotate(-4deg) scale(1.04);
+  }
+  .hero-card-center:hover,
+  .hero-card-center:focus-visible {
+    transform: translate(0, -16px) rotate(0deg) scale(1.04);
+  }
+  .hero-card-right:hover,
+  .hero-card-right:focus-visible {
+    transform: translate(105px, -12px) rotate(4deg) scale(1.04);
+  }
 }
 
+/* Mobile adjustments (< 600px, e.g. 360px - 390px) */
 @media (max-width: 599px) {
   .hero-deck {
     max-width: 320px;
-    height: 380px;
+    height: 350px;
   }
   .hero-card {
-    width: 210px;
-    margin-left: -105px;
+    width: 170px;
+    margin-left: -85px;
+    bottom: 6px;
   }
   .hero-card-left {
-    transform: rotate(-11deg) translate(-28px, 6px);
+    transform: translate(-68px, 8px) rotate(-7deg);
   }
   .hero-card-center {
-    transform: rotate(-1deg) translate(0, 0);
+    transform: translate(0, 0) rotate(-1deg);
   }
   .hero-card-right {
-    transform: rotate(10deg) translate(28px, 8px);
+    transform: translate(68px, 10px) rotate(6deg);
+  }
+  .hero-card-left:hover,
+  .hero-card-left:focus-visible {
+    transform: translate(-68px, -10px) rotate(-4deg) scale(1.04);
+  }
+  .hero-card-center:hover,
+  .hero-card-center:focus-visible {
+    transform: translate(0, -12px) rotate(0deg) scale(1.04);
+  }
+  .hero-card-right:hover,
+  .hero-card-right:focus-visible {
+    transform: translate(68px, -10px) rotate(4deg) scale(1.04);
   }
 }
 
@@ -882,8 +940,12 @@ html[data-theme="dark"] .theme-icon-moon { display: none; }
     animation: none;
     transition: none;
   }
-  .hero-card:hover,
-  .hero-card:focus-visible {
+  .hero-card-left:hover,
+  .hero-card-left:focus-visible,
+  .hero-card-center:hover,
+  .hero-card-center:focus-visible,
+  .hero-card-right:hover,
+  .hero-card-right:focus-visible {
     transform: none;
   }
 }
