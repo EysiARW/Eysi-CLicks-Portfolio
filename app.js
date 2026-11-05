@@ -81,9 +81,9 @@ class PhotoAsset {
   #index;
 
   static #OPTICAL_PROFILES = {
-    predebut:      '85MM PRIME · f/1.4 · ISO 100 · NATURAL LIGHT',
-    events:        '35MM REPORTAGE · f/1.8 · ISO 400 · AMBIENT',
-    institutional: '24-70MM ARCHIVAL · f/2.8 · ISO 200 · DOCUMENTARY',
+    predebut:      'NATURAL LIGHT',
+    events:        'NATURAL LIGHT',
+    institutional: 'NATURAL LIGHT',
   };
 
   constructor(entry, category, orientation, index) {
@@ -314,7 +314,7 @@ class CursorLoupeController {
     }, { passive: true });
   }
 
-  attachInteractiveTarget(element, label = 'INSPECT PLATE') {
+  attachInteractiveTarget(element, label = 'INSPECT PHOTO') {
     if (!this.#el || !this.#finePointerQuery.matches || !element) return;
     element.addEventListener('mouseenter', () => {
       if (this.#textEl) this.#textEl.textContent = label;
@@ -588,13 +588,19 @@ class LightboxController {
 
     if (this.#imgEl) {
       this.#imgEl.src = current.src;
-      const catLabel = current.categoryLabel || 'ARCHIVE PLATE';
+      const catLabel = current.categoryLabel || 'PORTFOLIO';
       const plateNo = current.plateNumber || `PLATE ${String(this.#currentIndex + 1).padStart(2, '0')}`;
-      const captionText = current.caption || 'Archival photograph';
+      const captionText = current.caption || 'Photograph';
       this.#imgEl.alt = `${captionText} — ${catLabel} (${plateNo})`;
     }
+    const hasCaption = Boolean(current.caption && current.caption.trim());
     if (this.#titleEl) {
-      this.#titleEl.textContent = current.caption || 'Cherished Moment';
+      this.#titleEl.textContent = hasCaption ? current.caption : '';
+      this.#titleEl.style.display = hasCaption ? '' : 'none';
+    }
+    const sep1 = document.getElementById('lightbox-sep-1');
+    if (sep1) {
+      sep1.style.display = hasCaption ? '' : 'none';
     }
     if (this.#plateNoEl) {
       this.#plateNoEl.textContent = current.plateNumber || `PLATE ${String(this.#currentIndex + 1).padStart(2, '0')}`;
@@ -1240,7 +1246,7 @@ class GalleryPresenter {
 
   #bindHeroFloatingFrames() {
     document.querySelectorAll('.hero-frame').forEach(frame => {
-      this.#cursorLoupe?.attachInteractiveTarget(frame, 'OPEN ARCHIVE PLATE');
+      this.#cursorLoupe?.attachInteractiveTarget(frame, 'VIEW PHOTO');
 
       const handler = () => {
         const cat    = frame.dataset.cat;

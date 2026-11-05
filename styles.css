@@ -1985,7 +1985,7 @@ html[data-theme="dark"] .photo-item picture {
 }
 
 .lightbox-frame-wrap::after {
-  content: 'EYSI CLICKS · ARCHIVAL PLATE';
+  content: 'EYSI CLICKS · PHOTOGRAPHY';
   position: absolute;
   bottom: clamp(7px, 1.1vw, 14px);
   right: clamp(14px, 2.5vw, 32px);
