@@ -5,22 +5,24 @@
   <meta charset="UTF-8">
   <style>html{background:#faf8f5}html[data-theme="dark"]{background:#0a0a0b}</style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>EYSI CLICKS — Cherishing &amp; Immortalizing Moments</title>
-  <meta name="description" content="Cherishing and immortalizing life's fleeting moments through the lens. Pre-Debut, Events, and Institutional photography by Andrei C. Capoy in Cabuyao, Laguna.">
+  <title>EYSI CLICKS — Photography Portfolio</title>
+  <meta name="description" content="Pre-Debut, Events, and Institutional photography in natural light by Andrei C. Capoy. Based in Cabuyao, Laguna.">
   <meta name="author" content="Andrei C. Capoy">
   <meta name="theme-color" content="#faf8f5" id="meta-theme-color">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="EYSI CLICKS — Cherishing &amp; Immortalizing Moments">
-  <meta property="og:description" content="Moments fade. Photographs endure. Life's most precious memories preserved through the lens by Andrei C. Capoy.">
+  <meta property="og:title" content="EYSI CLICKS — Photography">
+  <meta property="og:description" content="Pre-Debut, Events, and Institutional photography in natural light by Andrei C. Capoy. Based in Cabuyao, Laguna.">
+  <!-- TODO: Confirm og:image selection (currently set to predebut/portrait/EYSI-2-22.jpg) -->
   <meta property="og:image" content="https://eysiarw.github.io/Eysi-CLicks-Portfolio/predebut/portrait/EYSI-2-22.jpg">
   <meta property="og:site_name" content="EYSI CLICKS">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="EYSI CLICKS — Cherishing &amp; Immortalizing Moments">
-  <meta name="twitter:description" content="Moments fade. Photographs endure. Life's most precious memories preserved through the lens by Andrei C. Capoy.">
+  <meta name="twitter:title" content="EYSI CLICKS — Photography">
+  <meta name="twitter:description" content="Pre-Debut, Events, and Institutional photography in natural light by Andrei C. Capoy. Based in Cabuyao, Laguna.">
+  <!-- TODO: Confirm twitter:image selection (currently set to predebut/portrait/EYSI-2-22.jpg) -->
   <meta name="twitter:image" content="https://eysiarw.github.io/Eysi-CLicks-Portfolio/predebut/portrait/EYSI-2-22.jpg">
 
   <!-- Favicon Suite -->
@@ -87,11 +89,11 @@
     <div class="nav-actions">
       <ul class="nav-links">
         <li><a href="#hero" class="nav-link active" data-section="hero">Home</a></li>
-        <li><a href="#gallery" class="nav-link" data-section="gallery">Work</a></li>
         <li><a href="#about" class="nav-link" data-section="about">About</a></li>
+        <li><a href="#gallery" class="nav-link" data-section="gallery">Work</a></li>
       </ul>
 
-      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to Darkroom Mode" title="Toggle Daylight / Darkroom Ambience">
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to dark mode" title="Toggle daylight / dark mode">
         <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
           <circle cx="12" cy="12" r="4.5"></circle>
           <path d="M12 2v2.5M12 19.5V22M4.93 4.93l1.77 1.77M17.3 17.3l1.77 1.77M2 12h2.5M19.5 12H22M4.93 19.07l1.77-1.77M17.3 6.7l1.77-1.77" stroke-linecap="round"></path>
@@ -99,7 +101,7 @@
         <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
-        <span class="theme-toggle-label" id="theme-toggle-label">Darkroom</span>
+        <span class="theme-toggle-label" id="theme-toggle-label">Dark mode</span>
       </button>
     </div>
   </nav>
@@ -122,6 +124,14 @@
         </h1>
 
         <p class="hero-tagline">“We take photos as a return ticket to a moment otherwise gone.”</p>
+
+        <p class="hero-categories">
+          <span>Pre-Debut</span>
+          <span class="cat-sep" aria-hidden="true">·</span>
+          <span>Events</span>
+          <span class="cat-sep" aria-hidden="true">·</span>
+          <span>Institutional</span>
+        </p>
 
         <div class="hero-cta-group">
           <a href="#gallery" class="btn-editorial btn-editorial-primary">
@@ -162,12 +172,43 @@
   </section>
 
 
+  <section id="about" class="page-section">
+
+    <div class="about-wrap">
+
+      <figure class="about-img">
+        <div class="about-img-inner">
+          <picture>
+            <source srcset="EYSI-3-15.webp" type="image/webp">
+            <img src="EYSI-3-15.jpg" alt="Andrei C. Capoy portrait" loading="lazy" decoding="async" width="800" height="1000">
+          </picture>
+        </div>
+        <figcaption class="about-img-tag">
+          <span class="about-tag-name">Andrei C. Capoy</span>
+          <span class="about-tag-role">Photographer</span>
+        </figcaption>
+      </figure>
+
+      <div class="about-text">
+        <p class="section-eyebrow">About</p>
+        <h2 class="section-title">Andrei C. Capoy</h2>
+        <p class="about-role">Photographer · EYSI CLICKS</p>
+        <!-- TODO: Clarify what the former "28" counter represented (e.g., 28 archive plates, age, or founding year?) -->
+        <p class="about-bio">
+          Based in Cabuyao, Laguna, I photograph pre-debuts, celebrations, and institutional events in natural light, capturing unhurried moments you'll still love fifty years from now.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+
   <section id="gallery" class="page-section">
 
     <div class="section-header">
       <p class="section-eyebrow">Portfolio</p>
       <h2 class="section-title" id="gallery-heading" tabindex="-1">Selected Works</h2>
-      <p class="section-subtitle">Moments stilled and preserved through natural light.</p>
     </div>
 
     <!-- Gallery controls: category filters (primary) + orientation toggle (secondary) -->
@@ -211,73 +252,19 @@
 
 
     <div class="cat-panel active" id="panel-predebut" role="tabpanel" aria-labelledby="tab-predebut" tabindex="0">
-      <div class="cat-intro">
-        <p>A celebration of youth and milestones — portraits of grace, laughter, and coming of age.</p>
-      </div>
-
       <!-- Photos populated dynamically via app.js -->
       <div class="photo-grid" id="grid-predebut"></div>
-
     </div>
 
     <div class="cat-panel" id="panel-events" role="tabpanel" aria-labelledby="tab-events" tabindex="0">
-      <div class="cat-intro">
-        <p>Unscripted joy and shared celebrations — freezing the warmth of milestones with the ones who matter most.</p>
-      </div>
-
       <!-- Photos populated dynamically via app.js -->
       <div class="photo-grid" id="grid-events"></div>
-
     </div>
 
-
     <div class="cat-panel" id="panel-institutional" role="tabpanel" aria-labelledby="tab-institutional" tabindex="0">
-      <div class="cat-intro">
-        <p>Shared purpose, collective pride, and heritage — honoring the communities and milestone achievements that shape tomorrow.</p>
-      </div>
-
       <!-- Photos populated dynamically via app.js -->
       <div class="photo-grid" id="grid-institutional"></div>
     </div>
-  </section>
-
-  <section id="about" class="page-section">
-
-    <div class="about-wrap">
-
-      <figure class="about-img">
-        <div class="about-img-inner">
-          <picture>
-            <source srcset="EYSI-3-15.webp" type="image/webp">
-            <img src="EYSI-3-15.jpg" alt="Andrei C. Capoy portrait" loading="lazy" decoding="async" width="800" height="1000">
-          </picture>
-        </div>
-        <figcaption class="about-img-tag">
-          <span class="about-tag-name">Andrei C. Capoy</span>
-          <span class="about-tag-role">Photographer</span>
-        </figcaption>
-      </figure>
-
-      <div class="about-text">
-        <p class="section-eyebrow">About</p>
-        <h2 class="section-title">Preserving What Matters Most</h2>
-        <p class="about-lead">
-          Time moves relentlessly forward, but a photograph holds the quiet power to stand still. Behind the lens, I capture genuine human connection — a proud smile, the radiant grace of an 18th debut, the shared triumph of an institution, and the unspoken warmth that binds people together.
-        </p>
-        <blockquote class="about-quote">
-          <em>Based in Cabuyao, Laguna, my focus is giving you a return ticket to the days that mattered most — transforming fleeting moments into enduring memories.</em>
-        </blockquote>
-
-        <div class="about-signature">
-          <div class="sig-line">
-            <span class="sig-script">Andrei C. Capoy</span>
-            <span class="sig-title">Photographer · EYSI CLICKS</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
   </section>
 
   <!-- Screen reader live announcement region for gallery state changes -->
@@ -289,8 +276,7 @@
     <div class="footer-colophon">
       <div class="footer-brand-col">
         <div class="logo-ft">EYSI CLICKS</div>
-        <p>Moments fade. Photographs endure. &nbsp;·&nbsp; Cabuyao, Laguna</p>
-        <p class="ft-sub">Cherishing &amp; preserving life's meaningful moments through the lens</p>
+        <p>EYSI CLICKS · Cabuyao, Laguna</p>
       </div>
 
       <div class="ft-socials" aria-label="Social links">
@@ -298,12 +284,7 @@
         <span class="ft-sep" aria-hidden="true">·</span>
         <a href="https://www.facebook.com/eysiclicks/" target="_blank" rel="noopener noreferrer" class="ft-link">Facebook</a>
         <span class="ft-sep" aria-hidden="true">·</span>
-        <a href="mailto:andreicapoy@gmail.com?subject=Inquiry%20%E2%80%94%20EYSI%20CLICKS" class="ft-link">Direct Mail</a>
-      </div>
-
-      <div class="footer-telemetry">
-        <span class="ft-location">Cabuyao, Laguna · Region IV-A</span>
-        <span class="ft-service">Pre-Debut &nbsp;·&nbsp; Events &nbsp;·&nbsp; Institutional</span>
+        <a href="#hero" class="ft-link">TOP</a>
       </div>
     </div>
   </footer>
