@@ -265,12 +265,12 @@ class ThemeManager {
 
     const isDark = theme === 'dark';
     if (this.#toggleLabel) {
-      this.#toggleLabel.textContent = isDark ? 'Daylight' : 'Darkroom';
+      this.#toggleLabel.textContent = isDark ? 'Light Mode' : 'Dark Mode';
     }
     if (this.#toggleBtn) {
       this.#toggleBtn.setAttribute(
         'aria-label',
-        isDark ? 'Switch to Archival Daylight Mode' : 'Switch to Darkroom Mode'
+        isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'
       );
     }
     if (this.#metaThemeColor) {
@@ -1312,9 +1312,9 @@ class TelemetryHudController {
   #lastScrollY = 0;
 
   static #CHAPTERS = {
-    hero:    'Fleeting Moments Held Forever',
+    hero:    'EYSI CLICKS',
+    about:   'Andrei C. Capoy',
     gallery: 'Selected Works',
-    about:   'Preserving What Matters Most',
   };
 
   constructor() {
@@ -1403,7 +1403,7 @@ class TelemetryHudController {
 class EditorialMotionController {
   #aboutSection;
   #aboutWrap;
-  #inquireSection;
+  #footerSection;
   #heroMonument;
   #counterEl;
   #isCounterAnimated = false;
@@ -1414,7 +1414,7 @@ class EditorialMotionController {
     this.#transitionCoordinator = transitionCoordinator;
     this.#aboutSection   = document.getElementById('about');
     this.#aboutWrap      = document.querySelector('.about-wrap');
-    this.#inquireSection = document.getElementById('footer') || document.getElementById('inquire');
+    this.#footerSection  = document.getElementById('footer');
     this.#heroMonument   = document.querySelector('.hero-monument');
     this.#counterEl      = document.getElementById('ledger-total-plates');
 
@@ -1425,14 +1425,14 @@ class EditorialMotionController {
   #initScrollObservers() {
     if (this.#transitionCoordinator?.prefersReducedMotion) {
       if (this.#aboutWrap) this.#aboutWrap.classList.add('is-in-view');
-      if (this.#inquireSection) this.#inquireSection.classList.add('is-in-view');
+      if (this.#footerSection) this.#footerSection.classList.add('is-in-view');
       if (this.#counterEl) this.#counterEl.textContent = '28';
       return;
     }
 
     if (typeof IntersectionObserver === 'undefined') {
       if (this.#aboutWrap) this.#aboutWrap.classList.add('is-in-view');
-      if (this.#inquireSection) this.#inquireSection.classList.add('is-in-view');
+      if (this.#footerSection) this.#footerSection.classList.add('is-in-view');
       return;
     }
 
@@ -1442,7 +1442,7 @@ class EditorialMotionController {
           if (entry.target === this.#aboutSection) {
             if (this.#aboutWrap) this.#aboutWrap.classList.add('is-in-view');
             this.#animateCounter(28);
-          } else if (entry.target === this.#inquireSection) {
+          } else if (entry.target === this.#footerSection) {
             entry.target.classList.add('is-in-view');
           }
           observer.unobserve(entry.target);
@@ -1454,7 +1454,7 @@ class EditorialMotionController {
     });
 
     if (this.#aboutSection) revealObserver.observe(this.#aboutSection);
-    if (this.#inquireSection) revealObserver.observe(this.#inquireSection);
+    if (this.#footerSection) revealObserver.observe(this.#footerSection);
   }
 
   #animateCounter(target) {
