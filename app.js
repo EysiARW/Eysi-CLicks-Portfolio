@@ -127,15 +127,15 @@ class PhotoAsset {
 
   get categoryLabel() {
     const labels = {
-      predebut:      'PRE-DEBUT MONOGRAPH',
-      events:        'EVENTS CHRONICLE',
-      institutional: 'INSTITUTIONAL ARCHIVE',
+      predebut:      'PRE-DEBUT',
+      events:        'EVENTS',
+      institutional: 'INSTITUTIONAL',
     };
-    return labels[this.#category] || 'ARCHIVE PLATE';
+    return labels[this.#category] || 'PORTFOLIO';
   }
 
   get opticalTelemetry() {
-    return PhotoAsset.#OPTICAL_PROFILES[this.#category] || '35MM FULL-FRAME · NATURAL LIGHT';
+    return 'NATURAL LIGHT';
   }
 }
 
@@ -1313,9 +1313,8 @@ class TelemetryHudController {
 
   static #CHAPTERS = {
     hero:    'Fleeting Moments Held Forever',
-    about:   'The Heart Behind The Lens',
-    gallery: 'Heirlooms Preserved in Time',
-    inquire: 'Commissions & Private Bookings',
+    gallery: 'Selected Works',
+    about:   'Preserving What Matters Most',
   };
 
   constructor() {
@@ -1415,7 +1414,7 @@ class EditorialMotionController {
     this.#transitionCoordinator = transitionCoordinator;
     this.#aboutSection   = document.getElementById('about');
     this.#aboutWrap      = document.querySelector('.about-wrap');
-    this.#inquireSection = document.getElementById('inquire');
+    this.#inquireSection = document.getElementById('footer') || document.getElementById('inquire');
     this.#heroMonument   = document.querySelector('.hero-monument');
     this.#counterEl      = document.getElementById('ledger-total-plates');
 
