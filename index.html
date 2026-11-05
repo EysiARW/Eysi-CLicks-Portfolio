@@ -5,25 +5,29 @@
   <meta charset="UTF-8">
   <style>html{background:#faf8f5}html[data-theme="dark"]{background:#0a0a0b}</style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>EYSI CLICKS — Photography Portfolio</title>
-  <meta name="description" content="Pre-Debut, Events, and Institutional photography in natural light by Andrei C. Capoy. Based in Cabuyao, Laguna.">
+  <title>EYSI CLICKS — Photographer in Cabuyao, Laguna</title>
+  <meta name="description" content="Natural light photography for pre-debuts, celebrations, and institutional events in Cabuyao, Laguna by Andrei C. Capoy.">
   <meta name="author" content="Andrei C. Capoy">
+  <link rel="canonical" href="https://eysiarw.github.io/Eysi-CLicks-Portfolio/">
   <meta name="theme-color" content="#faf8f5" id="meta-theme-color">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="EYSI CLICKS — Photography">
-  <meta property="og:description" content="Pre-Debut, Events, and Institutional photography in natural light by Andrei C. Capoy. Based in Cabuyao, Laguna.">
-  <!-- TODO: Confirm og:image selection (currently set to predebut/portrait/EYSI-2-22.jpg) -->
-  <meta property="og:image" content="https://eysiarw.github.io/Eysi-CLicks-Portfolio/predebut/portrait/EYSI-2-22.jpg">
+  <meta property="og:url" content="https://eysiarw.github.io/Eysi-CLicks-Portfolio/">
+  <meta property="og:title" content="EYSI CLICKS — Photographer in Cabuyao, Laguna">
+  <meta property="og:description" content="Natural light photography for pre-debuts, celebrations, and institutional events in Cabuyao, Laguna by Andrei C. Capoy.">
+  <meta property="og:image" content="https://eysiarw.github.io/Eysi-CLicks-Portfolio/og-preview.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="EYSI CLICKS Photography — Pre-Debut, Events, Institutional">
   <meta property="og:site_name" content="EYSI CLICKS">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="EYSI CLICKS — Photography">
-  <meta name="twitter:description" content="Pre-Debut, Events, and Institutional photography in natural light by Andrei C. Capoy. Based in Cabuyao, Laguna.">
-  <!-- TODO: Confirm twitter:image selection (currently set to predebut/portrait/EYSI-2-22.jpg) -->
-  <meta name="twitter:image" content="https://eysiarw.github.io/Eysi-CLicks-Portfolio/predebut/portrait/EYSI-2-22.jpg">
+  <meta name="twitter:title" content="EYSI CLICKS — Photographer in Cabuyao, Laguna">
+  <meta name="twitter:description" content="Natural light photography for pre-debuts, celebrations, and institutional events in Cabuyao, Laguna by Andrei C. Capoy.">
+  <meta name="twitter:image" content="https://eysiarw.github.io/Eysi-CLicks-Portfolio/og-preview.jpg">
+  <meta name="twitter:image:alt" content="EYSI CLICKS Photography — Pre-Debut, Events, Institutional">
 
   <!-- Favicon Suite -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
@@ -57,16 +61,14 @@
       "@type": "Person",
       "name": "Andrei C. Capoy"
     },
-    "description": "Cherishing and immortalizing life's fleeting moments through the lens. Pre-Debut, Events, and Institutional photography based in Cabuyao, Laguna.",
+    "description": "Natural light photography for pre-debuts, celebrations, and institutional events based in Cabuyao, Laguna.",
     "url": "https://eysiarw.github.io/Eysi-CLicks-Portfolio/",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Cabuyao",
-      "addressRegion": "Laguna",
-      "addressCountry": "PH"
-    },
-    "areaServed": ["Cabuyao", "Santa Rosa", "Calamba", "Laguna", "Region IV-A"],
-    "image": "https://eysiarw.github.io/Eysi-CLicks-Portfolio/EYSI-3-15.jpg"
+    "areaServed": ["Cabuyao", "Laguna", "Region IV-A"],
+    "image": "https://eysiarw.github.io/Eysi-CLicks-Portfolio/og-preview.jpg",
+    "sameAs": [
+      "https://www.facebook.com/profile.php?id=61564911851468",
+      "https://www.facebook.com/Barneylooo/"
+    ]
   }
   </script>
 </head>
@@ -251,9 +253,51 @@
     </div>
 
 
+    <noscript>
+      <div class="noscript-notice">
+        <p>Viewing the interactive portfolio with filter switching, slideshow, and full-resolution photo inspection requires JavaScript.</p>
+      </div>
+    </noscript>
+
     <div class="cat-panel active" id="panel-predebut" role="tabpanel" aria-labelledby="tab-predebut" tabindex="0">
-      <!-- Photos populated dynamically via app.js -->
-      <div class="photo-grid" id="grid-predebut"></div>
+      <!-- Photos populated dynamically via app.js; static fallback for initial load & noscript -->
+      <div class="photo-grid" id="grid-predebut">
+        <figure class="photo-item is-revealed">
+          <picture>
+            <source srcset="predebut/portrait/EYSI-2-22.webp" type="image/webp">
+            <img src="predebut/portrait/EYSI-2-22.jpg" alt="Avegail @18 · Pre-Debut portrait" width="800" height="1000" loading="eager" decoding="async">
+          </picture>
+          <figcaption class="photo-overlay"><span class="photo-label">Avegail @18</span></figcaption>
+        </figure>
+        <figure class="photo-item is-revealed">
+          <picture>
+            <source srcset="predebut/portrait/EYSI-5-5.webp" type="image/webp">
+            <img src="predebut/portrait/EYSI-5-5.jpg" alt="Trisha @20 · Pre-Debut portrait" width="800" height="1000" loading="lazy" decoding="async">
+          </picture>
+          <figcaption class="photo-overlay"><span class="photo-label">Trisha @20</span></figcaption>
+        </figure>
+        <figure class="photo-item is-revealed">
+          <picture>
+            <source srcset="predebut/portrait/EYSI-6-3.webp" type="image/webp">
+            <img src="predebut/portrait/EYSI-6-3.jpg" alt="Anne @20 · Pre-Debut portrait" width="800" height="1000" loading="lazy" decoding="async">
+          </picture>
+          <figcaption class="photo-overlay"><span class="photo-label">Anne @20</span></figcaption>
+        </figure>
+        <figure class="photo-item is-revealed">
+          <picture>
+            <source srcset="predebut/portrait/EYSI-7-3.webp" type="image/webp">
+            <img src="predebut/portrait/EYSI-7-3.jpg" alt="Anne @20 · Pre-Debut portrait" width="800" height="1000" loading="lazy" decoding="async">
+          </picture>
+          <figcaption class="photo-overlay"><span class="photo-label">Anne @20</span></figcaption>
+        </figure>
+        <figure class="photo-item is-revealed">
+          <picture>
+            <source srcset="predebut/portrait/EYSI-8-3.webp" type="image/webp">
+            <img src="predebut/portrait/EYSI-8-3.jpg" alt="Anne @20 · Pre-Debut portrait" width="800" height="1000" loading="lazy" decoding="async">
+          </picture>
+          <figcaption class="photo-overlay"><span class="photo-label">Anne @20</span></figcaption>
+        </figure>
+      </div>
     </div>
 
     <div class="cat-panel" id="panel-events" role="tabpanel" aria-labelledby="tab-events" tabindex="0">
