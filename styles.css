@@ -11,7 +11,7 @@
      8.  Exhibition Grid & Contact Sheet Proof Layout
      9.  Photo Plate Item, Viewfinder Reticles & Editorial Plaque
     10.  Darkroom Lightbox Inspector, Museum Mat & Filmstrip
-    11.  Commission Inquiry & Colophon Footer
+    11.  Colophon Footer
     12.  View Transitions, Keyframes & Reduced Motion
    ============================================================ */
 
@@ -625,8 +625,28 @@ html[data-theme="dark"] .theme-icon-moon { display: none; }
   color: var(--text);
   max-width: 540px;
   line-height: 1.5;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   animation: heroFadeUp 0.70s var(--motion-ease-cinematic) 0.30s backwards;
+}
+
+.hero-categories {
+  font-family: var(--font-interphases);
+  font-size: var(--fs-caption);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  animation: heroFadeUp 0.70s var(--motion-ease-cinematic) 0.45s backwards;
+}
+
+.hero-categories .cat-sep {
+  color: var(--accent-bronze);
+  opacity: 0.7;
 }
 
 .memory-motif {
@@ -1046,6 +1066,8 @@ html[data-theme="dark"] .about-img-inner {
 
 .about-text .section-eyebrow,
 .about-text .section-title,
+.about-role,
+.about-bio,
 .about-lead,
 .about-quote,
 .about-monograph-narrative,
@@ -1065,6 +1087,18 @@ html[data-theme="dark"] .about-img-inner {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 0.22s;
+}
+
+.about-wrap.is-in-view .about-role {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.32s;
+}
+
+.about-wrap.is-in-view .about-bio {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.42s;
 }
 
 .about-wrap.is-in-view .about-lead {
@@ -1097,7 +1131,27 @@ html[data-theme="dark"] .about-img-inner {
 }
 
 .about-text .section-title {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.about-role {
+  font-family: var(--font-interphases);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-bronze);
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.about-bio {
+  font-family: var(--font-garamond);
+  font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+  line-height: 1.7;
+  color: var(--text);
+  max-width: 580px;
+  text-align: center;
 }
 
 /* Print-inspired editorial drop cap */
@@ -1264,7 +1318,9 @@ html[data-theme="dark"] .about-img-inner {
     margin-left: auto;
   }
   .about-text .section-eyebrow,
-  .about-text .section-title {
+  .about-text .section-title,
+  .about-role,
+  .about-bio {
     text-align: left;
   }
 }
@@ -2193,7 +2249,7 @@ html[data-theme="dark"] .photo-item picture {
 }
 
 
-/* ── 11. COMMISSION INQUIRY & COLOPHON FOOTER ── */
+/* ── 11. COLOPHON FOOTER ── */
 
 footer {
   position: relative;
