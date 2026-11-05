@@ -1398,6 +1398,18 @@ html[data-theme="dark"] .about-img-inner {
   outline: none;
 }
 
+.noscript-notice {
+  padding: 1.25rem 1.75rem;
+  margin: 0 auto 2rem;
+  max-width: var(--container-narrow);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  text-align: center;
+  font-family: var(--font-interphases);
+  font-size: var(--fs-body);
+  color: var(--text-muted);
+}
+
 /* Gallery Controls Bar */
 .gallery-controls {
   display: flex;

@@ -22,48 +22,48 @@ const photoData = {
 
   predebut: {
     portrait: [
-      { src: "predebut/portrait/EYSI-2-22.jpg", caption: "Avegail @18" },
-      { src: "predebut/portrait/EYSI-5-5.jpg", caption: "Trisha @20" },
-      { src: "predebut/portrait/EYSI-6-3.jpg", caption: "Anne @20" },
-      { src: "predebut/portrait/EYSI-7-3.jpg", caption: "Anne @20" },
-      { src: "predebut/portrait/EYSI-8-3.jpg", caption: "Anne @20" }
+      { src: "predebut/portrait/EYSI-2-22.jpg", caption: "Avegail @18", alt: "Debutante in an off-shoulder ivory gown seated gracefully outdoors in golden natural light" },
+      { src: "predebut/portrait/EYSI-5-5.jpg", caption: "Trisha @20", alt: "Portrait of a smiling young woman outdoors in soft evening sunlight" },
+      { src: "predebut/portrait/EYSI-6-3.jpg", caption: "Anne @20", alt: "Close-up portrait of a young woman in an outdoor natural light setting" },
+      { src: "predebut/portrait/EYSI-7-3.jpg", caption: "Anne @20", alt: "Portrait of a smiling young woman with lush green foliage background" },
+      { src: "predebut/portrait/EYSI-8-3.jpg", caption: "Anne @20", alt: "Candid outdoor portrait of a young woman bathed in soft daylight" }
     ],
     landscape: [
-      { src: "predebut/landscape/EYSI-1-62.jpg", caption: "Avegail @18" },
-      { src: "predebut/landscape/EYSI-3-16.jpg", caption: "Avegail @18" },
-      { src: "predebut/landscape/EYSI-4-9.jpg", caption: "Trisha @20" }
+      { src: "predebut/landscape/EYSI-1-62.jpg", caption: "Avegail @18", alt: "Young woman in an elegant evening gown walking through an outdoor landscaped garden" },
+      { src: "predebut/landscape/EYSI-3-16.jpg", caption: "Avegail @18", alt: "Wide shot of a debutante posed in an evening gown outdoors during sunset" },
+      { src: "predebut/landscape/EYSI-4-9.jpg", caption: "Trisha @20", alt: "Outdoor portrait of a young woman posed gracefully in warm ambient light" }
     ],
   },
 
   events: {
     portrait: [
-      { src: "events/portrait/EYSI-7-3.jpg", caption: "Eddie @75" },
-      { src: "events/portrait/EYSI-8-3.jpg", caption: "Eddie @75" }
+      { src: "events/portrait/EYSI-7-3.jpg", caption: "Eddie @75", alt: "Portrait of an elderly celebrant smiling warmly at a milestone birthday gathering" },
+      { src: "events/portrait/EYSI-8-3.jpg", caption: "Eddie @75", alt: "Candid portrait of an elderly man celebrating a milestone surrounded by family" }
     ],
     landscape: [
-      { src: "events/landscape/EYSI-1-62.jpg", caption: "Pulo Ati-Atihan" },
-      { src: "events/landscape/EYSI-1.jpg", caption: "Khel Pangilinan" },
-      { src: "events/landscape/EYSI-2-22.jpg", caption: "Pulo Ati-Atihan" },
-      { src: "events/landscape/EYSI-3-16.jpg", caption: "Pulo Ati-Atihan" },
-      { src: "events/landscape/EYSI-4-9.jpg", caption: "Pulo Ati-Atihan" },
-      { src: "events/landscape/EYSI-5-5.jpg", caption: "Eddie @75" },
-      { src: "events/landscape/EYSI-5.jpg", caption: "Khel Pangilinan" },
-      { src: "events/landscape/EYSI-6-3.jpg", caption: "Eddie @75" },
-      { src: "events/landscape/EYSI-9.jpg", caption: "Khel Pangilinan" },
-      { src: "events/landscape/EYSI-12.jpg", caption: "Khel Pangilinan" }
+      { src: "events/landscape/EYSI-1-62.jpg", caption: "Pulo Ati-Atihan", alt: "Festival performers dancing in vibrant colorful feathered headdresses and traditional attire" },
+      { src: "events/landscape/EYSI-1.jpg", caption: "Khel Pangilinan", alt: "Gathering of friends and celebrants smiling together at a celebration" },
+      { src: "events/landscape/EYSI-2-22.jpg", caption: "Pulo Ati-Atihan", alt: "Street dancers in ornate headdresses performing energetically during a cultural festival" },
+      { src: "events/landscape/EYSI-3-16.jpg", caption: "Pulo Ati-Atihan", alt: "Vibrant festival dancers in traditional regalia participating in a street parade" },
+      { src: "events/landscape/EYSI-4-9.jpg", caption: "Pulo Ati-Atihan", alt: "Dynamic group portrait of cultural festival performers in elaborate costumes" },
+      { src: "events/landscape/EYSI-5-5.jpg", caption: "Eddie @75", alt: "Celebrant seated with family and guests at a milestone banquet celebration" },
+      { src: "events/landscape/EYSI-5.jpg", caption: "Khel Pangilinan", alt: "Event guests conversing and smiling warmly during an evening reception" },
+      { src: "events/landscape/EYSI-6-3.jpg", caption: "Eddie @75", alt: "Family members gathered around a celebration table sharing a joyful moment" },
+      { src: "events/landscape/EYSI-9.jpg", caption: "Khel Pangilinan", alt: "Candid moment of event attendees socializing and laughing together" },
+      { src: "events/landscape/EYSI-12.jpg", caption: "Khel Pangilinan", alt: "Group of smiling guests posing together at an celebratory event" }
     ],
   },
 
   institutional: {
     landscape: [
-      { src: "institutional/EYSI-32.jpg", caption: "Baccalaureate Mass" },
-      { src: "institutional/EYSI-37.jpg", caption: "Baccalaureate Mass" },
-      { src: "institutional/EYSI-41.jpg", caption: "Baccalaureate Mass" },
-      { src: "institutional/EYSI-55.jpg", caption: "Baccalaureate Mass" },
-      { src: "institutional/EYSI-109.jpg", caption: "UC - PNC Foundation Week 2026" },
-      { src: "institutional/EYSI-145.jpg", caption: "UC - PNC Foundation Week 2026" },
-      { src: "institutional/EYSI-152.jpg", caption: "UC - PNC Foundation Week 2026" },
-      { src: "institutional/EYSI-189.jpg", caption: "UC - PNC Foundation Week 2026" }
+      { src: "institutional/EYSI-32.jpg", caption: "Baccalaureate Mass", alt: "Graduates and faculty gathered in formal attire during a baccalaureate mass" },
+      { src: "institutional/EYSI-37.jpg", caption: "Baccalaureate Mass", alt: "Academic procession of graduates and university faculty in church ceremonies" },
+      { src: "institutional/EYSI-41.jpg", caption: "Baccalaureate Mass", alt: "Students and attendees standing solemnly during a formal academic ceremony" },
+      { src: "institutional/EYSI-55.jpg", caption: "Baccalaureate Mass", alt: "Large gathering of graduates and educators attending a formal university service" },
+      { src: "institutional/EYSI-109.jpg", caption: "UC - PNC Foundation Week 2026", alt: "University students and faculty participating in outdoor foundation week celebrations" },
+      { src: "institutional/EYSI-145.jpg", caption: "UC - PNC Foundation Week 2026", alt: "Campus community gathered outdoors during an institutional celebration" },
+      { src: "institutional/EYSI-152.jpg", caption: "UC - PNC Foundation Week 2026", alt: "Group of students in university uniform smiling during campus festivities" },
+      { src: "institutional/EYSI-189.jpg", caption: "UC - PNC Foundation Week 2026", alt: "Wide view of university grounds with students and staff celebrating foundation week" }
     ],
   },
 
@@ -76,6 +76,7 @@ class PhotoAsset {
   #src;
   #webpSrc;
   #caption;
+  #alt;
   #category;
   #orientation;
   #index;
@@ -91,6 +92,7 @@ class PhotoAsset {
     this.#src         = normalized.src;
     this.#webpSrc     = normalized.src.replace(/\.jpe?g$/i, '.webp');
     this.#caption     = normalized.caption;
+    this.#alt         = normalized.alt || '';
     this.#category    = category;
     this.#orientation = orientation;
     this.#index       = index;
@@ -98,24 +100,36 @@ class PhotoAsset {
 
   static #normalizeEntry(entry) {
     if (!entry || (typeof entry !== 'object' && typeof entry !== 'string')) {
-      return { src: '', caption: 'Cherished Moment' };
+      return { src: '', caption: 'Cherished Moment', alt: '' };
     }
     if (typeof entry !== 'string') {
-      return { src: (entry && entry.src) || '', caption: (entry && entry.caption) || 'Untitled Moment' };
+      return {
+        src: (entry && entry.src) || '',
+        caption: (entry && entry.caption) || 'Untitled Moment',
+        alt: (entry && entry.alt) || ''
+      };
     }
     const filename = entry.split('/').pop().split('.')[0];
     const caption = filename
       .replace(/[-_]+/g, ' ')
       .replace(/\b\w/g, c => c.toUpperCase());
-    return { src: entry, caption: caption || 'Cherished Moment' };
+    return { src: entry, caption: caption || 'Cherished Moment', alt: '' };
   }
 
   get src()         { return this.#src; }
   get webpSrc()     { return this.#webpSrc; }
   get caption()     { return this.#caption; }
+  get alt()         { return this.#alt; }
   get category()    { return this.#category; }
   get orientation() { return this.#orientation; }
   get index()       { return this.#index; }
+
+  get visualAlt() {
+    if (this.#alt) {
+      return `${this.#caption} — ${this.#alt} (${this.plateNumber})`;
+    }
+    return `${this.#caption} — ${this.categoryLabel} (${this.plateNumber})`;
+  }
 
   get plateNumber() {
     return `PLATE ${String(this.#index + 1).padStart(2, '0')}`;
@@ -591,7 +605,7 @@ class LightboxController {
       const catLabel = current.categoryLabel || 'PORTFOLIO';
       const plateNo = current.plateNumber || `PLATE ${String(this.#currentIndex + 1).padStart(2, '0')}`;
       const captionText = current.caption || 'Photograph';
-      this.#imgEl.alt = `${captionText} — ${catLabel} (${plateNo})`;
+      this.#imgEl.alt = current.visualAlt || `${captionText} — ${catLabel} (${plateNo})`;
     }
     const hasCaption = Boolean(current.caption && current.caption.trim());
     if (this.#titleEl) {
@@ -1159,7 +1173,7 @@ class GalleryPresenter {
 
       const img = document.createElement('img');
       img.src = asset.src;
-      img.alt = `${asset.caption} — ${asset.categoryLabel} (${asset.plateNumber})`;
+      img.alt = asset.visualAlt || `${asset.caption} — ${asset.categoryLabel} (${asset.plateNumber})`;
       img.width = asset.orientation === 'portrait' ? 800 : 1200;
       img.height = asset.orientation === 'portrait' ? 1000 : 800;
       img.loading = 'lazy';
