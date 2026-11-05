@@ -778,28 +778,119 @@ html[data-theme="dark"] .theme-icon-moon { display: none; }
   transform: translateY(-2px);
 }
 
-/* Photographic Hero Monument (Curatorial Centerpiece) */
+/* Photographic Hero Fanned Deck Showcase */
 .hero-showcase {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   width: 100%;
 }
 
-.hero-monument {
+.hero-deck {
+  position: relative;
   width: 100%;
-  max-width: min(420px, 100%);
+  max-width: min(480px, 100%);
+  height: clamp(380px, 48vh, 480px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.hero-card {
+  position: absolute;
+  width: clamp(220px, 26vw, 300px);
+  bottom: 12px;
+  left: 50%;
+  margin-left: calc(-1 * clamp(220px, 26vw, 300px) / 2);
+  transform-origin: 50% 120%;
   cursor: pointer;
   touch-action: manipulation;
+  transition: transform 0.45s var(--shutter-ease), box-shadow 0.45s var(--shutter-ease), opacity 0.35s ease, filter 0.35s ease, z-index 0.2s ease;
+  will-change: transform;
+}
+
+/* Card Fanning (playing card deck layout) */
+.hero-card-left {
+  z-index: 1;
+  transform: rotate(-14deg) translate(-42px, 8px);
+  animation: heroMonumentReveal 0.85s var(--motion-ease-cinematic) 0.15s backwards;
+}
+
+.hero-card-center {
+  z-index: 2;
+  transform: rotate(-1deg) translate(0, 0);
   animation: heroMonumentReveal 0.85s var(--motion-ease-cinematic) 0.25s backwards;
 }
 
-@media (min-width: 960px) {
-  .hero-monument {
-    max-width: min(380px, 42vw);
+.hero-card-right {
+  z-index: 3;
+  transform: rotate(12deg) translate(42px, 10px);
+  animation: heroMonumentReveal 0.85s var(--motion-ease-cinematic) 0.35s backwards;
+}
+
+/* Tactile Hover & Focus Interaction */
+.hero-card:hover,
+.hero-card:focus-visible {
+  z-index: 10 !important;
+  transform: rotate(0deg) translate(0, -18px) scale(1.05);
+  outline: none;
+}
+
+.hero-card:focus-visible .hero-monument-mat {
+  outline: 2px solid var(--accent-bronze);
+  outline-offset: 4px;
+}
+
+.hero-card:hover .hero-monument-mat {
+  border-color: var(--border-strong);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.22);
+}
+
+.hero-deck:hover .hero-card:not(:hover):not(:focus-visible) {
+  opacity: 0.86;
+  filter: brightness(0.95);
+}
+
+@media (max-width: 599px) {
+  .hero-deck {
+    max-width: 320px;
+    height: 380px;
   }
+  .hero-card {
+    width: 210px;
+    margin-left: -105px;
+  }
+  .hero-card-left {
+    transform: rotate(-11deg) translate(-28px, 6px);
+  }
+  .hero-card-center {
+    transform: rotate(-1deg) translate(0, 0);
+  }
+  .hero-card-right {
+    transform: rotate(10deg) translate(28px, 8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-card,
+  .hero-card-left,
+  .hero-card-center,
+  .hero-card-right {
+    animation: none;
+    transition: none;
+  }
+  .hero-card:hover,
+  .hero-card:focus-visible {
+    transform: none;
+  }
+}
+
+.hero-monument {
+  cursor: pointer;
+  touch-action: manipulation;
 }
 
 .hero-monument-mat {
