@@ -189,9 +189,16 @@ class PortfolioRepository {
     return this.#categories.reduce((sum, cat) => sum + this.getCategoryTotalCount(cat), 0);
   }
 
-  getPhotos(cat, orientation) {
-    const rawList = this.#rawStore[cat]?.[orientation] || [];
-    return rawList.map((entry, idx) => new PhotoAsset(entry, cat, orientation, idx));
+  getPhotos(cat, orientation = null) {
+    if (!this.#rawStore[cat]) return [];
+    if (orientation) {
+      const rawList = this.#rawStore[cat][orientation] || [];
+      return rawList.map((entry, idx) => new PhotoAsset(entry, cat, orientation, idx));
+    }
+    const portraits = (this.#rawStore[cat].portrait || []).map(entry => ({ entry, orient: 'portrait' }));
+    const landscapes = (this.#rawStore[cat].landscape || []).map(entry => ({ entry, orient: 'landscape' }));
+    const merged = [...portraits, ...landscapes];
+    return merged.map(({ entry, orient }, idx) => new PhotoAsset(entry, cat, orient, idx));
   }
 }
 
@@ -964,13 +971,7 @@ class GalleryPresenter {
   #lightbox;
   #cursorLoupe;
   #revealObserver = null;
-
-  #categoryOrientation = {
-    predebut:      'portrait',
-    events:        'landscape',
-    institutional: 'landscape',
-  };
-  #renderedSignature = {};
+  #renderedCategories = new Set();
 
   constructor(repository, transitionCoordinator, lightbox, cursorLoupe) {
     this.#repository            = repository;
@@ -1008,8 +1009,6 @@ class GalleryPresenter {
       const panel = document.getElementById('panel-' + cat);
       if (panel) panel.classList.add('active');
 
-      this.#ensureValidOrientation(cat);
-      this.#updateOrientToggleUI(cat);
       this.#ensureRendered(cat);
 
       if (window.location && typeof history !== 'undefined') {
@@ -1033,47 +1032,14 @@ class GalleryPresenter {
     }
   }
 
-  setOrientation(mode) {
-    const cat = this.activeCategory;
-    if (!this.#repository.hasOrientation(cat, mode)) return;
-    if (this.#categoryOrientation[cat] === mode) return;
-
-    this.#transitionCoordinator.run(() => {
-      this.#categoryOrientation[cat] = mode;
-      this.#updateOrientToggleUI(cat);
-      this.renderCategory(cat);
-    });
-  }
-
   renderCategory(cat) {
-    this.#ensureValidOrientation(cat);
-    const orientation = this.#categoryOrientation[cat];
-    const photos      = this.#repository.getPhotos(cat, orientation);
-
-    const grid = document.getElementById('grid-' + cat);
-    if (grid) {
-      grid.classList.toggle('orient-landscape', orientation === 'landscape');
-    }
-
+    const photos = this.#repository.getPhotos(cat);
     this.#buildGridDOM('grid-' + cat, photos);
-    this.#renderedSignature[cat] = orientation;
-  }
-
-  #ensureValidOrientation(cat) {
-    let orientation = this.#categoryOrientation[cat];
-    if (!this.#repository.hasOrientation(cat, orientation)) {
-      if (this.#repository.hasOrientation(cat, 'landscape')) {
-        orientation = 'landscape';
-      } else if (this.#repository.hasOrientation(cat, 'portrait')) {
-        orientation = 'portrait';
-      }
-      this.#categoryOrientation[cat] = orientation;
-    }
+    this.#renderedCategories.add(cat);
   }
 
   #ensureRendered(cat) {
-    const expectedSig = this.#categoryOrientation[cat];
-    if (this.#renderedSignature[cat] !== expectedSig) {
+    if (!this.#renderedCategories.has(cat)) {
       this.renderCategory(cat);
     }
   }
@@ -1085,31 +1051,6 @@ class GalleryPresenter {
         const count = this.#repository.getCategoryTotalCount(cat);
         badge.textContent = String(count).padStart(2, '0');
       }
-    });
-  }
-
-  #updateOrientToggleUI(cat) {
-    const mode = this.#categoryOrientation[cat];
-    const portraitCount  = this.#repository.getOrientationCount(cat, 'portrait');
-    const landscapeCount = this.#repository.getOrientationCount(cat, 'landscape');
-
-    const pCountEl = document.getElementById('orient-count-portrait');
-    const lCountEl = document.getElementById('orient-count-landscape');
-    if (pCountEl) pCountEl.textContent = portraitCount > 0 ? `(${portraitCount})` : '';
-    if (lCountEl) lCountEl.textContent = landscapeCount > 0 ? `(${landscapeCount})` : '';
-
-    document.querySelectorAll('.orient-btn').forEach(btn => {
-      const orient = btn.dataset.orient;
-      const isAvailable = this.#repository.hasOrientation(cat, orient);
-      const isActive = orient === mode;
-
-      btn.classList.toggle('active', isActive);
-      btn.setAttribute('aria-pressed', String(isActive));
-      btn.disabled = !isAvailable;
-      btn.classList.toggle('disabled', !isAvailable);
-      btn.title = !isAvailable
-        ? `No ${orient} photos in this collection`
-        : `View ${orient} photos`;
     });
   }
 
@@ -1132,17 +1073,7 @@ class GalleryPresenter {
     if (!grid) return;
 
     grid.innerHTML = '';
-
-    if (!photos.length) {
-      const empty = document.createElement('div');
-      empty.className = 'empty-state';
-      empty.innerHTML = `
-        <p class="empty-state-title">Series Curated in Alternate Format</p>
-        <p class="empty-state-sub">Switch orientation above to explore this collection.</p>
-      `;
-      grid.appendChild(empty);
-      return;
-    }
+    if (!photos.length) return;
 
     photos.forEach((asset, idx) => {
       const figure = document.createElement('figure');
@@ -1241,10 +1172,6 @@ class GalleryPresenter {
       });
     }
 
-    document.querySelectorAll('.orient-btn[data-orient]').forEach(btn => {
-      btn.addEventListener('click', () => this.setOrientation(btn.dataset.orient));
-    });
-
     window.addEventListener('popstate', e => {
       const tab = e?.state?.tab || new URLSearchParams(window.location?.search || '').get('tab');
       if (tab && this.#repository.isValidCategory(tab) && tab !== this.activeCategory) {
@@ -1258,13 +1185,22 @@ class GalleryPresenter {
       this.#cursorLoupe?.attachInteractiveTarget(frame, 'VIEW PHOTO');
 
       const handler = () => {
-        const cat    = frame.dataset.cat;
-        const orient = frame.dataset.orient || 'portrait';
-        const idx    = parseInt(frame.dataset.idx, 10) || 0;
-        const photos = this.#repository.getPhotos(cat, orient);
-        if (photos.length) {
-          this.#lightbox.open(photos, Math.min(idx, photos.length - 1), null);
+        const cat = frame.dataset.cat;
+        const slug = (frame.dataset.slug || '').toLowerCase();
+        const idx = parseInt(frame.dataset.idx, 10) || 0;
+        const photos = this.#repository.getPhotos(cat);
+        if (!photos.length) return;
+
+        let targetIdx = idx;
+        if (slug) {
+          const found = photos.findIndex(p => {
+            const s = (p.src && p.src.split('/').pop().replace(/\.[^.]+$/, '')) || '';
+            return s.toLowerCase() === slug;
+          });
+          if (found !== -1) targetIdx = found;
         }
+
+        this.#lightbox.open(photos, Math.min(targetIdx, photos.length - 1), null);
       };
 
       frame.addEventListener('click', handler);
@@ -1297,18 +1233,15 @@ class GalleryPresenter {
     const targetSlug = hash.replace(/^#photo-/, '').toLowerCase();
 
     for (const cat of this.#repository.getCategories()) {
-      for (const orient of ['portrait', 'landscape']) {
-        const photos = this.#repository.getPhotos(cat, orient);
-        const idx = photos.findIndex((p, i) => {
-          const s = (p.src && p.src.split('/').pop().replace(/\.[^.]+$/, '')) || String(i + 1);
-          return s.toLowerCase() === targetSlug;
-        });
-        if (idx !== -1) {
-          this.switchTab(cat, false);
-          this.setOrientation(orient);
-          this.#lightbox.open(photos, idx, null);
-          return;
-        }
+      const photos = this.#repository.getPhotos(cat);
+      const idx = photos.findIndex((p, i) => {
+        const s = (p.src && p.src.split('/').pop().replace(/\.[^.]+$/, '')) || String(i + 1);
+        return s.toLowerCase() === targetSlug;
+      });
+      if (idx !== -1) {
+        this.switchTab(cat, false);
+        this.#lightbox.open(photos, idx, null);
+        return;
       }
     }
   }

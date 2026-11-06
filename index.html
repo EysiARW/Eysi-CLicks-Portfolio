@@ -149,7 +149,7 @@
         <div class="hero-deck" aria-label="Curated photography highlights">
 
           <!-- Card 1: Pre-Debut (Left) -->
-          <figure class="hero-monument hero-card hero-card-left hero-frame" data-cat="predebut" data-orient="portrait" data-idx="0" role="button" tabindex="0" aria-label="View Avegail @18 (Pre-Debut) in Lightbox">
+          <figure class="hero-monument hero-card hero-card-left hero-frame" data-cat="predebut" data-slug="eysi-2-22" data-idx="0" role="button" tabindex="0" aria-label="View Avegail @18 (Pre-Debut) in Lightbox">
             <div class="hero-monument-mat">
               <picture>
                 <source srcset="predebut/portrait/EYSI-2-22.webp" type="image/webp">
@@ -164,7 +164,7 @@
           </figure>
 
           <!-- Card 2: Events (Center) -->
-          <figure class="hero-monument hero-card hero-card-center hero-frame" data-cat="events" data-orient="portrait" data-idx="0" role="button" tabindex="0" aria-label="View Eddie @75 (Events) in Lightbox">
+          <figure class="hero-monument hero-card hero-card-center hero-frame" data-cat="events" data-slug="eysi-7-3" data-idx="0" role="button" tabindex="0" aria-label="View Eddie @75 (Events) in Lightbox">
             <div class="hero-monument-mat">
               <picture>
                 <source srcset="events/portrait/EYSI-7-3.webp" type="image/webp">
@@ -179,7 +179,7 @@
           </figure>
 
           <!-- Card 3: Institutional (Right) -->
-          <figure class="hero-monument hero-card hero-card-right hero-frame" data-cat="institutional" data-orient="landscape" data-idx="4" role="button" tabindex="0" aria-label="View Foundation Week (Institutional) in Lightbox">
+          <figure class="hero-monument hero-card hero-card-right hero-frame" data-cat="institutional" data-slug="eysi-109" data-idx="4" role="button" tabindex="0" aria-label="View Foundation Week (Institutional) in Lightbox">
             <div class="hero-monument-mat">
               <picture>
                 <source srcset="institutional/EYSI-109.webp" type="image/webp">
@@ -247,7 +247,7 @@
       <h2 class="section-title" id="gallery-heading" tabindex="-1">Selected Works</h2>
     </div>
 
-    <!-- Gallery controls: category filters (primary) + orientation toggle (secondary) -->
+    <!-- Gallery controls: unified category pill filters -->
     <div class="gallery-controls">
 
       <div class="cat-tabs" role="tablist" aria-label="Photo categories">
@@ -263,25 +263,6 @@
           <span class="cat-tab-name">Institutional</span>
           <span class="cat-tab-count" id="count-institutional">08</span>
         </button>
-      </div>
-
-      <div class="gallery-right-controls">
-        <div class="orient-toggle" role="group" aria-label="Photo orientation">
-          <button type="button" class="orient-btn active" id="orient-portrait" data-orient="portrait" aria-pressed="true">
-            <svg class="orient-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
-              <rect x="3.5" y="1.5" width="9" height="13" rx="1"></rect>
-            </svg>
-            <span>Portrait</span>
-            <span class="orient-count" id="orient-count-portrait"></span>
-          </button>
-          <button type="button" class="orient-btn" id="orient-landscape" data-orient="landscape" aria-pressed="false">
-            <svg class="orient-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
-              <rect x="1.5" y="3.5" width="13" height="9" rx="1"></rect>
-            </svg>
-            <span>Landscape</span>
-            <span class="orient-count" id="orient-count-landscape"></span>
-          </button>
-        </div>
       </div>
 
     </div>
