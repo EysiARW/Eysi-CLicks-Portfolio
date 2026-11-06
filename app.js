@@ -1424,7 +1424,7 @@ class EditorialMotionController {
   #aboutSection;
   #aboutWrap;
   #footerSection;
-  #heroMonument;
+  #heroDeck;
   #counterEl;
   #isCounterAnimated = false;
   #scrollTicking = false;
@@ -1435,11 +1435,12 @@ class EditorialMotionController {
     this.#aboutSection   = document.getElementById('about');
     this.#aboutWrap      = document.querySelector('.about-wrap');
     this.#footerSection  = document.getElementById('footer');
-    this.#heroMonument   = document.querySelector('.hero-monument');
+    this.#heroDeck       = document.querySelector('.hero-deck') || document.querySelector('.hero-monument');
     this.#counterEl      = document.getElementById('ledger-total-plates');
 
     this.#initScrollObservers();
     this.#initHeroParallax();
+    this.#initEntranceCleanup();
   }
 
   #initScrollObservers() {
@@ -1508,7 +1509,7 @@ class EditorialMotionController {
   }
 
   #initHeroParallax() {
-    if (!this.#heroMonument || this.#transitionCoordinator?.prefersReducedMotion) return;
+    if (!this.#heroDeck || this.#transitionCoordinator?.prefersReducedMotion) return;
 
     window.addEventListener('scroll', () => {
       if (!this.#scrollTicking) {
@@ -1526,8 +1527,19 @@ class EditorialMotionController {
     const scrollY = window.scrollY || 0;
     if (scrollY < window.innerHeight) {
       const offset = Math.min(scrollY * 0.07, 36);
-      this.#heroMonument.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0)`;
+      this.#heroDeck.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0)`;
     }
+  }
+
+  #initEntranceCleanup() {
+    const cards = document.querySelectorAll('.hero-card');
+    cards.forEach(card => {
+      card.addEventListener('animationend', (e) => {
+        if (e.target === card) {
+          card.style.willChange = 'auto';
+        }
+      }, { once: true });
+    });
   }
 }
 
