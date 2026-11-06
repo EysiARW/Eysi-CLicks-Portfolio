@@ -1033,16 +1033,16 @@ html[data-theme="dark"] .theme-icon-moon { display: none; }
     height: 350px;
   }
   .hero-card {
-    width: 170px;
-    margin-left: -85px;
+    width: 156px;
+    margin-left: -78px;
     bottom: 6px;
   }
   .hero-card-left {
-    --card-rest-x: -68px;
+    --card-rest-x: -72px;
     --card-rest-y: 8px;
-    --card-rest-rot: -7deg;
+    --card-rest-rot: -5.5deg;
     --card-hover-y: -10px;
-    --card-hover-rot: -4deg;
+    --card-hover-rot: -3deg;
   }
   .hero-card-center {
     --card-rest-x: 0px;
@@ -1052,11 +1052,11 @@ html[data-theme="dark"] .theme-icon-moon { display: none; }
     --card-hover-rot: 0deg;
   }
   .hero-card-right {
-    --card-rest-x: 68px;
+    --card-rest-x: 72px;
     --card-rest-y: 10px;
-    --card-rest-rot: 6deg;
+    --card-rest-rot: 5.5deg;
     --card-hover-y: -10px;
-    --card-hover-rot: 4deg;
+    --card-hover-rot: 3deg;
   }
 }
 
@@ -1076,6 +1076,24 @@ html[data-theme="dark"] .theme-icon-moon { display: none; }
   .hero-card-right:focus-visible {
     transform: translate(var(--card-rest-x), var(--card-rest-y)) rotate(var(--card-rest-rot)) !important;
   }
+}
+
+/* Hero entrance settled state: once the one-time entrance choreography concludes,
+   shut down all entrance keyframes permanently so that scrolling back up to the hero
+   or repainting never retriggers keyframes or re-evaluates 0% offsets. */
+html.hero-settled .hero-card-left,
+html.hero-settled .hero-card-center,
+html.hero-settled .hero-card-right,
+html.hero-settled .hero-title-word,
+html.hero-settled .hero-tagline,
+html.hero-settled .hero-categories,
+html.hero-settled .hero-cta-group,
+html.hero-settled .hero-scroll-hint,
+html.hero-settled .nav-logo,
+html.hero-settled .nav-links li,
+html.hero-settled .theme-toggle {
+  animation: none !important;
+  will-change: auto !important;
 }
 
 .hero-monument {

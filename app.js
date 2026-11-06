@@ -1086,11 +1086,6 @@ class GalleryPresenter {
         badge.textContent = String(count).padStart(2, '0');
       }
     });
-
-    const totalEl = document.getElementById('ledger-total-plates');
-    if (totalEl) {
-      totalEl.textContent = String(this.#repository.getTotalArchivalPlates());
-    }
   }
 
   #updateOrientToggleUI(cat) {
@@ -1366,6 +1361,9 @@ class TelemetryHudController {
     if (this.#bttBtn) {
       this.#bttBtn.classList.toggle('visible', scrollY > 480);
     }
+    if (scrollY <= 80 && this.#currentSectionId !== 'hero') {
+      this.#setActiveSection('hero');
+    }
     this.#lastScrollY = scrollY;
   }
 
@@ -1424,10 +1422,6 @@ class EditorialMotionController {
   #aboutSection;
   #aboutWrap;
   #footerSection;
-  #heroDeck;
-  #counterEl;
-  #isCounterAnimated = false;
-  #scrollTicking = false;
   #transitionCoordinator;
 
   constructor(transitionCoordinator) {
@@ -1435,11 +1429,8 @@ class EditorialMotionController {
     this.#aboutSection   = document.getElementById('about');
     this.#aboutWrap      = document.querySelector('.about-wrap');
     this.#footerSection  = document.getElementById('footer');
-    this.#heroDeck       = document.querySelector('.hero-deck') || document.querySelector('.hero-monument');
-    this.#counterEl      = document.getElementById('ledger-total-plates');
 
     this.#initScrollObservers();
-    this.#initHeroParallax();
     this.#initEntranceCleanup();
   }
 
@@ -1447,7 +1438,6 @@ class EditorialMotionController {
     if (this.#transitionCoordinator?.prefersReducedMotion) {
       if (this.#aboutWrap) this.#aboutWrap.classList.add('is-in-view');
       if (this.#footerSection) this.#footerSection.classList.add('is-in-view');
-      if (this.#counterEl) this.#counterEl.textContent = '28';
       return;
     }
 
@@ -1462,7 +1452,6 @@ class EditorialMotionController {
         if (entry.isIntersecting) {
           if (entry.target === this.#aboutSection) {
             if (this.#aboutWrap) this.#aboutWrap.classList.add('is-in-view');
-            this.#animateCounter(28);
           } else if (entry.target === this.#footerSection) {
             entry.target.classList.add('is-in-view');
           }
@@ -1478,68 +1467,35 @@ class EditorialMotionController {
     if (this.#footerSection) revealObserver.observe(this.#footerSection);
   }
 
-  #animateCounter(target) {
-    if (this.#isCounterAnimated || !this.#counterEl) return;
-    this.#isCounterAnimated = true;
+  #initEntranceCleanup() {
+    let settled = false;
+    const settle = () => {
+      if (settled) return;
+      settled = true;
+      document.documentElement.classList.add('hero-settled');
+    };
 
     if (this.#transitionCoordinator?.prefersReducedMotion) {
-      this.#counterEl.textContent = String(target);
+      settle();
       return;
     }
 
-    const duration = 1100;
-    const startVal = 1;
-    const startTime = performance.now();
-
-    const step = (now) => {
-      const elapsed = Math.min(now - startTime, duration);
-      const progress = elapsed / duration;
-      const ease = 1 - Math.pow(1 - progress, 3);
-      const current = Math.round(startVal + (target - startVal) * ease);
-      this.#counterEl.textContent = String(current);
-
-      if (progress < 1) {
-        requestAnimationFrame(step);
-      } else {
-        this.#counterEl.textContent = String(target);
-      }
-    };
-
-    requestAnimationFrame(step);
-  }
-
-  #initHeroParallax() {
-    if (!this.#heroDeck || this.#transitionCoordinator?.prefersReducedMotion) return;
-
-    window.addEventListener('scroll', () => {
-      if (!this.#scrollTicking) {
-        requestAnimationFrame(() => {
-          this.#applyParallax();
-          this.#scrollTicking = false;
-        });
-        this.#scrollTicking = true;
-      }
-    }, { passive: true });
-  }
-
-  #applyParallax() {
-    if (window.innerWidth < 960) return;
-    const scrollY = window.scrollY || 0;
-    if (scrollY < window.innerHeight) {
-      const offset = Math.min(scrollY * 0.07, 36);
-      this.#heroDeck.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0)`;
-    }
-  }
-
-  #initEntranceCleanup() {
     const cards = document.querySelectorAll('.hero-card');
+    let endedCount = 0;
     cards.forEach(card => {
       card.addEventListener('animationend', (e) => {
         if (e.target === card) {
           card.style.willChange = 'auto';
+          endedCount++;
+          if (endedCount >= cards.length) {
+            settle();
+          }
         }
-      }, { once: true });
+      });
     });
+
+    // Fallback timer: ensure hero is marked settled even if animations are suppressed or run in background tab
+    setTimeout(settle, 1650);
   }
 }
 
