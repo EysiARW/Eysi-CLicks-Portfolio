@@ -145,10 +145,6 @@ class PhotoAsset {
     return `PLATE ${String(this.#index + 1).padStart(2, '0')}`;
   }
 
-  get momentTag() {
-    return `PLATE ${String(this.#index + 1).padStart(2, '0')}`;
-  }
-
   get categoryLabel() {
     const labels = {
       predebut:      'PRE-DEBUT',
@@ -375,7 +371,6 @@ class LightboxController {
   #lightboxEl;
   #imgEl;
   #titleEl;
-  #plateNoEl;
   #counterEl;
   #catBadgeEl;
   #exifEl;
@@ -410,7 +405,6 @@ class LightboxController {
     this.#lightboxEl     = document.getElementById('lightbox');
     this.#imgEl          = document.getElementById('lightbox-img');
     this.#titleEl        = document.getElementById('lightbox-title');
-    this.#plateNoEl      = document.getElementById('lightbox-plate-no');
     this.#counterEl      = document.getElementById('lightbox-counter');
     this.#catBadgeEl     = document.getElementById('lightbox-cat-badge');
     this.#exifEl         = document.getElementById('lightbox-exif');
@@ -628,13 +622,6 @@ class LightboxController {
     if (this.#titleEl) {
       this.#titleEl.textContent = hasCaption ? current.caption : '';
       this.#titleEl.style.display = hasCaption ? '' : 'none';
-    }
-    const sep1 = document.getElementById('lightbox-sep-1');
-    if (sep1) {
-      sep1.style.display = hasCaption ? '' : 'none';
-    }
-    if (this.#plateNoEl) {
-      this.#plateNoEl.textContent = current.plateNumber || `PLATE ${String(this.#currentIndex + 1).padStart(2, '0')}`;
     }
     if (this.#counterEl) {
       this.#counterEl.textContent = `${String(this.#currentIndex + 1).padStart(2, '0')} / ${String(this.#images.length).padStart(2, '0')}`;
@@ -1096,12 +1083,6 @@ class GalleryPresenter {
         this.#revealObserver.observe(figure);
       }
 
-      // Archival Plate Index Header Strip
-      const tag = document.createElement('span');
-      tag.className = 'photo-tag';
-      tag.textContent = asset.momentTag;
-      figure.appendChild(tag);
-
       const picture = document.createElement('picture');
       const sourceWebp = document.createElement('source');
       sourceWebp.srcset = asset.webpSrc;
@@ -1138,7 +1119,7 @@ class GalleryPresenter {
       figure.appendChild(picture);
       figure.appendChild(figcaption);
 
-      this.#cursorLoupe?.attachInteractiveTarget(figure, `INSPECT ${asset.plateNumber}`);
+      this.#cursorLoupe?.attachInteractiveTarget(figure, 'INSPECT');
 
       const activate = () => this.#lightbox.open(photos, idx, figure);
       figure.addEventListener('click', activate);

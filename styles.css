@@ -1974,30 +1974,6 @@ html[data-theme="dark"] .photo-item picture {
 }
 
 
-/* Archival Plate Header Strip */
-.photo-tag {
-  position: static;
-  opacity: 1;
-  transform: none;
-  font-family: var(--font-interphases);
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  color: var(--text-muted);
-  background: transparent;
-  border: none;
-  padding: 0 0 0.55rem 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-transform: uppercase;
-}
-
-.photo-tag::after {
-  content: '';
-  display: none;
-}
-
 /* Contact Sheet Proof Footer Caption */
 .photo-overlay {
   position: static;
@@ -2318,13 +2294,6 @@ html[data-theme="dark"] .photo-item picture {
   color: #ffffff;
   pointer-events: none;
   box-shadow: none;
-}
-
-.lightbox-plate-no {
-  font-family: var(--font-mono);
-  font-size: var(--fs-caption);
-  letter-spacing: 0.16em;
-  color: #c5ad8d;
 }
 
 .lightbox-title {
