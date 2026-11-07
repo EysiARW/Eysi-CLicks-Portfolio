@@ -992,7 +992,7 @@ class GalleryPresenter {
 
   get activeCategory() {
     const activeTab = document.querySelector('.cat-tab.active');
-    return activeTab ? activeTab.dataset.tab : this.#repository.getCategories()[0];
+    return activeTab ? activeTab.dataset.tab : 'events';
   }
 
   switchTab(cat, animate = true, updateHistory = true) {

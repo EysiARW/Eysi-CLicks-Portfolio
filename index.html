@@ -248,11 +248,11 @@
     <div class="gallery-controls">
 
       <div class="cat-tabs" role="tablist" aria-label="Photo categories">
-        <button type="button" class="cat-tab active" id="tab-predebut" data-tab="predebut" role="tab" aria-selected="true" aria-controls="panel-predebut" tabindex="0">
+        <button type="button" class="cat-tab" id="tab-predebut" data-tab="predebut" role="tab" aria-selected="false" aria-controls="panel-predebut" tabindex="-1">
           <span class="cat-tab-name">Pre-Debut</span>
           <span class="cat-tab-count" id="count-predebut">08</span>
         </button>
-        <button type="button" class="cat-tab" id="tab-events" data-tab="events" role="tab" aria-selected="false" aria-controls="panel-events" tabindex="-1">
+        <button type="button" class="cat-tab active" id="tab-events" data-tab="events" role="tab" aria-selected="true" aria-controls="panel-events" tabindex="0">
           <span class="cat-tab-name">Events</span>
           <span class="cat-tab-count" id="count-events">22</span>
         </button>
@@ -271,13 +271,13 @@
       </div>
     </noscript>
 
-    <div class="cat-panel active" id="panel-predebut" role="tabpanel" aria-labelledby="tab-predebut" tabindex="0">
-      <!-- Photos populated dynamically via app.js; static fallback for initial load & noscript -->
+    <div class="cat-panel" id="panel-predebut" role="tabpanel" aria-labelledby="tab-predebut">
+      <!-- Photos populated dynamically via app.js; static fallback for noscript -->
       <div class="photo-grid" id="grid-predebut">
         <figure class="photo-item is-revealed">
           <picture>
             <source srcset="predebut/portrait/EYSI-2-22.webp" type="image/webp">
-            <img src="predebut/portrait/EYSI-2-22.jpg" alt="Avegail @18 · Pre-Debut portrait" width="800" height="1000" loading="eager" decoding="async">
+            <img src="predebut/portrait/EYSI-2-22.jpg" alt="Avegail @18 · Pre-Debut portrait" width="800" height="1000" loading="lazy" decoding="async">
           </picture>
           <figcaption class="photo-overlay"><span class="photo-label">Avegail @18</span></figcaption>
         </figure>
@@ -312,12 +312,55 @@
       </div>
     </div>
 
-    <div class="cat-panel" id="panel-events" role="tabpanel" aria-labelledby="tab-events" tabindex="0">
-      <!-- Photos populated dynamically via app.js -->
-      <div class="photo-grid" id="grid-events"></div>
+    <div class="cat-panel active" id="panel-events" role="tabpanel" aria-labelledby="tab-events">
+      <!-- Photos populated dynamically via app.js; static fallback for initial load & noscript -->
+      <div class="photo-grid" id="grid-events">
+        <figure class="photo-item is-revealed">
+          <picture>
+            <source srcset="events/portrait/EYSI-7-3.webp" type="image/webp">
+            <img src="events/portrait/EYSI-7-3.jpg" alt="Eddie @75 · Events portrait" width="800" height="1000" loading="lazy" decoding="async">
+          </picture>
+          <figcaption class="photo-overlay"><span class="photo-label">Eddie @75</span></figcaption>
+        </figure>
+        <figure class="photo-item is-revealed">
+          <picture>
+            <source srcset="events/portrait/EYSI-8-3.webp" type="image/webp">
+            <img src="events/portrait/EYSI-8-3.jpg" alt="Eddie @75 · Events portrait" width="800" height="1000" loading="lazy" decoding="async">
+          </picture>
+          <figcaption class="photo-overlay"><span class="photo-label">Eddie @75</span></figcaption>
+        </figure>
+        <figure class="photo-item is-revealed">
+          <picture>
+            <source srcset="events/landscape/EYSI-1-62.webp" type="image/webp">
+            <img src="events/landscape/EYSI-1-62.jpg" alt="Pulo Ati-Atihan · Events photograph" width="1200" height="800" loading="lazy" decoding="async">
+          </picture>
+          <figcaption class="photo-overlay"><span class="photo-label">Pulo Ati-Atihan</span></figcaption>
+        </figure>
+        <figure class="photo-item is-revealed">
+          <picture>
+            <source srcset="events/landscape/EYSI-1.webp" type="image/webp">
+            <img src="events/landscape/EYSI-1.jpg" alt="Khel Pangilinan · Events photograph" width="1200" height="800" loading="lazy" decoding="async">
+          </picture>
+          <figcaption class="photo-overlay"><span class="photo-label">Khel Pangilinan</span></figcaption>
+        </figure>
+        <figure class="photo-item is-revealed">
+          <picture>
+            <source srcset="events/landscape/EYSI-2-22.webp" type="image/webp">
+            <img src="events/landscape/EYSI-2-22.jpg" alt="Pulo Ati-Atihan · Events photograph" width="1200" height="800" loading="lazy" decoding="async">
+          </picture>
+          <figcaption class="photo-overlay"><span class="photo-label">Pulo Ati-Atihan</span></figcaption>
+        </figure>
+        <figure class="photo-item is-revealed">
+          <picture>
+            <source srcset="events/landscape/EYSI-3-16.webp" type="image/webp">
+            <img src="events/landscape/EYSI-3-16.jpg" alt="Pulo Ati-Atihan · Events photograph" width="1200" height="800" loading="lazy" decoding="async">
+          </picture>
+          <figcaption class="photo-overlay"><span class="photo-label">Pulo Ati-Atihan</span></figcaption>
+        </figure>
+      </div>
     </div>
 
-    <div class="cat-panel" id="panel-institutional" role="tabpanel" aria-labelledby="tab-institutional" tabindex="0">
+    <div class="cat-panel" id="panel-institutional" role="tabpanel" aria-labelledby="tab-institutional">
       <!-- Photos populated dynamically via app.js -->
       <div class="photo-grid" id="grid-institutional"></div>
     </div>
