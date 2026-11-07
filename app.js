@@ -593,6 +593,16 @@ class LightboxController {
     if (this.#zoomBtn) this.#zoomBtn.setAttribute('aria-pressed', 'false');
   }
 
+  #getPanBounds() {
+    const scale = 1.85;
+    const w = this.#imgEl?.clientWidth || 0;
+    const h = this.#imgEl?.clientHeight || 0;
+    return {
+      maxX: w > 0 ? (w * (scale - 1)) / 2 : 180,
+      maxY: h > 0 ? (h * (scale - 1)) / 2 : 180,
+    };
+  }
+
   #clearSourceTransitionClass() {
     document.querySelectorAll('.photo-item.vt-source').forEach(el => el.classList.remove('vt-source'));
     this.#activeSourceFigure = null;
@@ -782,9 +792,9 @@ class LightboxController {
           this.#hasDragged = true;
           this.#imgEl.classList.add('is-panning');
         }
-        const maxPan = 180;
-        this.#panX = Math.max(-maxPan, Math.min(maxPan, this.#startPanX + deltaX));
-        this.#panY = Math.max(-maxPan, Math.min(maxPan, this.#startPanY + deltaY));
+        const { maxX, maxY } = this.#getPanBounds();
+        this.#panX = Math.max(-maxX, Math.min(maxX, this.#startPanX + deltaX));
+        this.#panY = Math.max(-maxY, Math.min(maxY, this.#startPanY + deltaY));
         this.#imgEl.style.transform = `scale(1.85) translate3d(${this.#panX / 1.85}px, ${this.#panY / 1.85}px, 0)`;
       });
 
@@ -794,6 +804,15 @@ class LightboxController {
           this.#imgEl?.classList.remove('is-panning');
         }
       });
+
+      this.#imgEl.addEventListener('wheel', e => {
+        if (!this.#isZoomed) return;
+        e.preventDefault();
+        const { maxX, maxY } = this.#getPanBounds();
+        this.#panX = Math.max(-maxX, Math.min(maxX, this.#panX - e.deltaX));
+        this.#panY = Math.max(-maxY, Math.min(maxY, this.#panY - e.deltaY));
+        this.#imgEl.style.transform = `scale(1.85) translate3d(${this.#panX / 1.85}px, ${this.#panY / 1.85}px, 0)`;
+      }, { passive: false });
 
       this.#imgEl.addEventListener('click', e => {
         e.stopPropagation();
@@ -867,9 +886,9 @@ class LightboxController {
             this.#hasDragged = true;
             this.#imgEl?.classList.add('is-panning');
           }
-          const maxPan = 180;
-          this.#panX = Math.max(-maxPan, Math.min(maxPan, this.#startPanX + deltaX));
-          this.#panY = Math.max(-maxPan, Math.min(maxPan, this.#startPanY + deltaY));
+          const { maxX, maxY } = this.#getPanBounds();
+          this.#panX = Math.max(-maxX, Math.min(maxX, this.#startPanX + deltaX));
+          this.#panY = Math.max(-maxY, Math.min(maxY, this.#startPanY + deltaY));
           if (this.#imgEl) {
             this.#imgEl.style.transform = `scale(1.85) translate3d(${this.#panX / 1.85}px, ${this.#panY / 1.85}px, 0)`;
           }

@@ -2055,7 +2055,7 @@ html[data-theme="dark"] .photo-item img {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4.2rem 1.5rem 1.25rem;
+  padding: 3.8rem 1.5rem 1rem;
 }
 
 .lightbox.open {
@@ -2172,8 +2172,8 @@ html[data-theme="dark"] .photo-item img {
   align-items: center;
   position: relative;
   max-width: 92vw;
-  max-height: 86vh;
-  max-height: 86dvh;
+  max-height: 90vh;
+  max-height: 90dvh;
 }
 
 /* Museum Passe-Partout Mat Wrapper (Permanent Default) */
@@ -2183,7 +2183,7 @@ html[data-theme="dark"] .photo-item img {
   align-items: center;
   justify-content: center;
   border-radius: 2px;
-  padding: clamp(14px, 2.5vw, 32px) clamp(14px, 2.5vw, 32px) clamp(26px, 3.5vw, 46px);
+  padding: clamp(14px, 2.2vw, 28px) clamp(14px, 2.2vw, 28px) clamp(26px, 3.2vw, 42px);
   background: #faf8f5;
   box-shadow: 0 30px 100px rgba(0, 0, 0, 0.95), inset 0 0 0 1px rgba(17, 17, 17, 0.12);
 }
@@ -2191,8 +2191,8 @@ html[data-theme="dark"] .photo-item img {
 .lightbox-frame-wrap::after {
   content: 'EYSI CLICKS';
   position: absolute;
-  bottom: clamp(7px, 1.1vw, 14px);
-  right: clamp(14px, 2.5vw, 32px);
+  bottom: clamp(7px, 1.1vw, 13px);
+  right: clamp(14px, 2.2vw, 28px);
   font-family: var(--font-garamond);
   font-style: italic;
   font-size: var(--fs-caption);
@@ -2200,15 +2200,24 @@ html[data-theme="dark"] .photo-item img {
   color: rgba(17, 17, 17, 0.36);
 }
 
+.lightbox-mat-viewport {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 1px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
 .lightbox-img {
   width: auto;
   height: auto;
-  max-width: 88vw;
-  max-height: 58vh;
-  max-height: 58dvh;
+  max-width: calc(100vw - 11rem);
+  max-height: 67vh;
+  max-height: 67dvh;
   object-fit: contain;
   border-radius: 1px;
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.15);
   transition: transform 0.4s var(--shutter-ease), filter 0.35s ease;
   animation: photoBloom 0.3s ease;
   cursor: zoom-in;
@@ -2303,13 +2312,13 @@ html[data-theme="dark"] .photo-item img {
 
 /* Lightbox Filmstrip Thumbnail Scrubber */
 .lightbox-filmstrip {
-  margin-top: 0.65rem;
+  margin-top: 0.5rem;
   display: flex;
   align-items: center;
-  gap: 0.42rem;
-  max-width: min(88vw, 680px);
+  gap: 0.4rem;
+  max-width: min(88vw, 640px);
   overflow-x: auto;
-  padding: 0.3rem 0.5rem;
+  padding: 0.25rem 0.5rem;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
   scroll-behavior: smooth;
@@ -2323,15 +2332,15 @@ html[data-theme="dark"] .photo-item img {
 }
 
 .filmstrip-thumb {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   flex-shrink: 0;
   border-radius: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   background: #111111;
   overflow: hidden;
   cursor: pointer;
-  opacity: 0.45;
+  opacity: 0.36;
   padding: 0;
   transition: opacity 0.25s, border-color 0.25s, transform 0.25s var(--shutter-ease);
 }
@@ -2352,8 +2361,8 @@ html[data-theme="dark"] .photo-item img {
 .filmstrip-thumb.active {
   opacity: 1;
   border-color: #ffffff;
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
-  transform: scale(1.08);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+  transform: scale(1.06);
 }
 
 @keyframes photoBloom {
@@ -2365,6 +2374,7 @@ html[data-theme="dark"] .photo-item img {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  z-index: 15;
   width: 46px;
   height: 46px;
   border-radius: 50%;
@@ -2395,36 +2405,93 @@ html[data-theme="dark"] .photo-item img {
 .lightbox-prev { left: 1.5rem; }
 .lightbox-next { right: 1.5rem; }
 
-@media (max-width: 640px) {
+@media (max-width: 960px) and (min-height: 521px) {
   .lightbox {
-    padding: 3.8rem 0.5rem 0.8rem;
+    padding: 3.8rem 1rem 1rem;
+  }
+  .lightbox.open {
+    display: grid;
+    grid-template-columns: 1fr auto auto 1fr;
+    grid-template-rows: auto auto;
+    align-content: center;
+    justify-items: center;
+    row-gap: 0.85rem;
+    column-gap: 1rem;
+  }
+  .lightbox-stage {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    max-width: 94vw;
+  }
+  .lightbox-img {
+    max-width: calc(92vw - 36px);
+    max-height: 62vh;
+    max-height: 62dvh;
+  }
+  .lightbox-nav {
+    position: static;
+    transform: none;
+    width: 44px;
+    height: 44px;
+  }
+  .lightbox-nav:hover {
+    transform: scale(1.06);
+  }
+  .lightbox-prev {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .lightbox-next {
+    grid-column: 3;
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 640px) and (min-height: 521px) {
+  .lightbox {
+    padding: 3.6rem 0.65rem 0.85rem;
   }
   .lightbox-topbar {
     padding: 0.75rem 0.85rem;
   }
+  .lightbox-frame-wrap {
+    padding: 10px 10px 26px;
+  }
+  .lightbox-frame-wrap::after {
+    bottom: 6px;
+    right: 10px;
+    font-size: 0.72rem;
+  }
   .lightbox-img {
-    max-width: 86vw;
-    max-height: 56vh;
-    max-height: 56dvh;
+    max-width: calc(94vw - 20px);
+    max-height: 58vh;
+    max-height: 58dvh;
   }
-  .lightbox-nav {
-    width: 44px;
-    height: 44px;
+  .filmstrip-thumb {
+    width: 34px;
+    height: 34px;
   }
-  .lightbox-prev { left: 0.5rem; }
-  .lightbox-next { right: 0.5rem; }
 }
 
 @media (orientation: landscape) and (max-height: 520px) {
   .lightbox {
-    padding: 3.2rem 0.5rem 0.4rem;
+    padding: 3.1rem 0.5rem 0.4rem;
   }
   .lightbox-topbar {
     padding: 0.4rem 1rem;
   }
+  .lightbox-frame-wrap {
+    padding: 8px 8px 20px;
+  }
+  .lightbox-frame-wrap::after {
+    bottom: 3px;
+    right: 8px;
+    font-size: 0.68rem;
+  }
   .lightbox-img {
-    max-height: 50vh;
-    max-height: 50dvh;
+    max-width: calc(100vw - 8.5rem);
+    max-height: 54vh;
+    max-height: 54dvh;
   }
   .lightbox-stage {
     max-height: 94vh;
@@ -2436,6 +2503,12 @@ html[data-theme="dark"] .photo-item img {
   .lightbox-filmstrip {
     margin-top: 0.25rem;
   }
+  .filmstrip-thumb {
+    width: 30px;
+    height: 30px;
+  }
+  .lightbox-prev { left: 0.75rem; }
+  .lightbox-next { right: 0.75rem; }
 }
 
 
