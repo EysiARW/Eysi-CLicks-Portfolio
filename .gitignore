@@ -8,6 +8,8 @@ Thumbs.db
 # Backup & uncompressed assets
 .originals/
 *.original.*
+\[PORTFOLIO_TOP_10_EDITED\]/
+\[*\]/
 
 # Agentic / SpecKit tooling artifacts
 .agents/
