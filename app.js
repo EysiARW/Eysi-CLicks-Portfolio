@@ -389,7 +389,6 @@ class LightboxController {
   #playBtn;
   #playLabel;
   #zoomBtn;
-  #shutterFlashEl;
   #transitionCoordinator;
   #cursorLoupe;
 
@@ -423,7 +422,6 @@ class LightboxController {
     this.#playBtn        = document.getElementById('lb-play-btn');
     this.#playLabel      = document.getElementById('lb-play-label');
     this.#zoomBtn        = document.getElementById('lb-zoom-btn');
-    this.#shutterFlashEl = document.getElementById('shutter-flash');
 
     this.#bindEvents();
   }
@@ -454,7 +452,6 @@ class LightboxController {
       sourceFigure.classList.add('vt-source');
     }
 
-    this.#triggerShutterFlash();
     this.#renderFilmstrip();
     this.#updateView();
 
@@ -605,16 +602,6 @@ class LightboxController {
   #clearSourceTransitionClass() {
     document.querySelectorAll('.photo-item.vt-source').forEach(el => el.classList.remove('vt-source'));
     this.#activeSourceFigure = null;
-  }
-
-  #triggerShutterFlash() {
-    if (!this.#shutterFlashEl || this.#transitionCoordinator.prefersReducedMotion) return;
-    this.#shutterFlashEl.classList.add('flash-active');
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        this.#shutterFlashEl.classList.remove('flash-active');
-      }, 130);
-    });
   }
 
   #updateView() {
