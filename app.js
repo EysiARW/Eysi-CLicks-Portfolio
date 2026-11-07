@@ -157,15 +157,11 @@ class PhotoAsset {
 
   get categoryLabel() {
     const labels = {
-      predebut:      'PRE-DEBUT',
-      events:        'EVENTS',
-      institutional: 'INSTITUTIONAL',
+      predebut:      'Pre-Debut',
+      events:        'Events',
+      institutional: 'Institutional',
     };
-    return labels[this.#category] || 'PORTFOLIO';
-  }
-
-  get opticalTelemetry() {
-    return 'NATURAL LIGHT';
+    return labels[this.#category] || 'Portfolio';
   }
 }
 
@@ -383,7 +379,6 @@ class LightboxController {
   #titleEl;
   #counterEl;
   #catBadgeEl;
-  #exifEl;
   #filmstripEl;
   #slideshowBarEl;
   #playBtn;
@@ -416,7 +411,6 @@ class LightboxController {
     this.#titleEl        = document.getElementById('lightbox-title');
     this.#counterEl      = document.getElementById('lightbox-counter');
     this.#catBadgeEl     = document.getElementById('lightbox-cat-badge');
-    this.#exifEl         = document.getElementById('lightbox-exif');
     this.#filmstripEl    = document.getElementById('lightbox-filmstrip');
     this.#slideshowBarEl = document.getElementById('lightbox-slideshow-bar');
     this.#playBtn        = document.getElementById('lb-play-btn');
@@ -625,9 +619,6 @@ class LightboxController {
     }
     if (this.#catBadgeEl && current.categoryLabel) {
       this.#catBadgeEl.textContent = current.categoryLabel;
-    }
-    if (this.#exifEl && current.opticalTelemetry) {
-      this.#exifEl.textContent = current.opticalTelemetry;
     }
 
     // ARIA live announcement
